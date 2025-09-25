@@ -1,0 +1,1 @@
+export const showProducts = import.meta.env.VITE_SHOW_PRODUCTS === "true";
