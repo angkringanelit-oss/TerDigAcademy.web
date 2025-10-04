@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,53 +8,38 @@ import {
   Award, Heart, Sparkles, Monitor, Brush
 } from "lucide-react";
 import { Mascot } from "../components/Mascot";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 // Import mascot images
 import starKidsMascot from "../assets/Star Kids.png";
 import queenChildMascot from "../assets/Quen Child.png";
 
-const studentWorks = [
-  {
-    id: 1,
-    title: "Digital Art Masterpiece",
-    student: "Anya, 8 tahun",
-    category: "Digital Painting",
-    description: "Karya seni digital pertama Anya menggunakan tablet",
-    image: "/api/placeholder/300/200",
-    program: "Sanggar Seni Digital",
-    achievement: "Juara 1 Lomba Seni Digital Anak"
-  },
-  {
-    id: 2,
-    title: "Mathematics Excellence",
-    student: "Budi, 7 tahun",
-    category: "Academic Achievement",
-    description: "Peningkatan nilai matematika dari 60 menjadi 95",
-    image: "/api/placeholder/300/200",
-    program: "Bimbel TerDig",
-    achievement: "Ranking 1 di Kelas"
-  },
-  {
-    id: 3,
-    title: "AI Art Creation",
-    student: "Citra, 16 tahun",
-    category: "AI Art",
-    description: "Karya AI art untuk kompetisi nasional",
-    image: "/api/placeholder/300/200",
-    program: "Sanggar Seni Digital",
-    achievement: "Finalist Kompetisi AI Art Nasional"
-  },
-  {
-    id: 4,
-    title: "Science Project",
-    student: "Doni, 12 tahun",
-    category: "STEM",
-    description: "Eksperimen IPA yang kreatif dan inovatif",
-    image: "/api/placeholder/300/200",
-    program: "Bimbel TerDig",
-    achievement: "Best Science Project"
-  }
-];
+interface GalleryItem {
+  id: number;
+  title: string;
+  image_url: string;
+  caption: string;
+}
+
+interface Event {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  category: string;
+  participants: string;
+  icon: string;
+}
+
+interface Achievement {
+  year: string;
+  title: string;
+  student: string;
+  description: string;
+}
 
 const upcomingEvents = [
   {
@@ -65,7 +51,7 @@ const upcomingEvents = [
     description: "Showcase karya-karya terbaik siswa Sanggar Seni Digital",
     category: "exhibition",
     participants: "50+ Siswa",
-    icon: Palette
+    icon: "Palette"
   },
   {
     id: 2,
@@ -76,7 +62,7 @@ const upcomingEvents = [
     description: "Kompetisi matematika untuk siswa SD dan SMP",
     category: "competition",
     participants: "100+ Siswa",
-    icon: Trophy
+    icon: "Trophy"
   },
   {
     id: 3,
@@ -87,7 +73,7 @@ const upcomingEvents = [
     description: "Belajar bersama anak tentang AI dan seni digital",
     category: "workshop",
     participants: "30 Keluarga",
-    icon: Sparkles
+    icon: "Sparkles"
   },
   {
     id: 4,
@@ -98,7 +84,7 @@ const upcomingEvents = [
     description: "Pameran proyek sains siswa dari berbagai tingkat",
     category: "fair",
     participants: "80+ Siswa",
-    icon: Award
+    icon: "Award"
   }
 ];
 
@@ -130,6 +116,49 @@ const achievements = [
 ];
 
 export function GalleryPage() {
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  // Fetch gallery items from Supabase
+  useEffect(() => {
+    const fetchGalleryItems = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const { data, error } = await supabase
+          .from("gallery")
+          .select("*");
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        setGalleryItems(data || []);
+      } catch (err) {
+        console.error("Error fetching gallery items:", err);
+        setError("Terjadi kesalahan saat memuat data galeri");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryItems();
+  }, []);
+
+  // Map icon names to actual components
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case "Palette": return Palette;
+      case "Trophy": return Trophy;
+      case "Sparkles": return Sparkles;
+      case "Award": return Award;
+      default: return Trophy;
+    }
+  };
+
   return (
     <div className="min-h-screen py-20 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50">
       <div className="container mx-auto px-4">
@@ -195,43 +224,35 @@ export function GalleryPage() {
               </p>
             </div>
 
+            {loading && <p className="text-center text-blue-600 font-semibold">Loading...</p>}
+            {error && <p className="text-center text-red-500 font-semibold">{error}</p>}
+
             <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-              {studentWorks.map((work) => (
-                <Card key={work.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+              {galleryItems.map((item) => (
+                <Card key={item.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                   <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                    <div className="text-center">
-                      {work.program === "Sanggar Seni Digital" ? (
+                    {item.image_url ? (
+                      <img 
+                        src={item.image_url} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/api/placeholder/300/200";
+                        }}
+                      />
+                    ) : (
+                      <div className="text-center">
                         <Palette className="w-16 h-16 text-purple-400 mx-auto mb-2" />
-                      ) : (
-                        <Trophy className="w-16 h-16 text-blue-400 mx-auto mb-2" />
-                      )}
-                      <p className="text-gray-500">Preview Karya</p>
-                    </div>
+                        <p className="text-gray-500">Preview Karya</p>
+                      </div>
+                    )}
                   </div>
                   <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl font-bold">{work.title}</CardTitle>
-                        <CardDescription className="text-purple-600 font-medium">{work.student}</CardDescription>
-                      </div>
-                      <Badge className={`${
-                        work.program === "Sanggar Seni Digital" 
-                          ? "bg-green-100 text-green-700"
-                          : "bg-blue-100 text-blue-700"
-                      }`}>
-                        {work.category}
-                      </Badge>
-                    </div>
+                    <CardTitle className="text-xl font-bold">{item.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600 mb-4">{work.description}</p>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Award className="w-4 h-4 text-yellow-500" />
-                      <span className="text-sm font-medium text-gray-700">{work.achievement}</span>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {work.program}
-                    </Badge>
+                    <p className="text-gray-600">{item.caption}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -249,7 +270,7 @@ export function GalleryPage() {
 
             <div className="grid md:grid-cols-2 gap-8">
               {upcomingEvents.map((event) => {
-                const IconComponent = event.icon;
+                const IconComponent = getIconComponent(event.icon);
                 return (
                   <Card key={event.id} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                     <CardHeader>
@@ -332,7 +353,10 @@ export function GalleryPage() {
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
             Bergabunglah dengan TerDig Academy dan wujudkan potensi terbaik anak Anda dalam akademik dan kreativitas digital
           </p>
-          <Button className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 rounded-xl font-semibold">
+          <Button 
+            className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 rounded-xl font-semibold"
+            onClick={() => navigate("/#programs")}
+          >
             Daftar Sekarang
           </Button>
         </div>

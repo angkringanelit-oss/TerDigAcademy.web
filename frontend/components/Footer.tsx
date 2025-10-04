@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Logo } from "./Logo";
+import { CONTACT_INFO, SOCIAL_LINKS } from "../config";
 
 export function Footer() {
   return (
@@ -18,16 +19,16 @@ export function Footer() {
               dan Sanggar Seni Digital untuk kreativitas tanpa batas.
             </p>
             <div className="flex gap-3 sm:gap-4">
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors touch-target">
+              <a href={SOCIAL_LINKS.facebook} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors touch-target" aria-label="Facebook">
                 <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors touch-target">
+              <a href={SOCIAL_LINKS.instagram} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors touch-target" aria-label="Instagram">
                 <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-400 transition-colors touch-target">
+              <a href={SOCIAL_LINKS.twitter} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-400 transition-colors touch-target" aria-label="Twitter">
                 <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-red-600 transition-colors touch-target">
+              <a href={SOCIAL_LINKS.youtube} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-red-600 transition-colors touch-target" aria-label="YouTube">
                 <Youtube className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
             </div>
@@ -68,8 +69,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/demo-ai" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Coba AI Kami
+                <Link to="/konsultasi-ai" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
+                  AI Konsultasi
                 </Link>
               </li>
             </ul>
@@ -105,8 +106,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/demo-ai" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  AI Demo
+                <Link to="/konsultasi-ai" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
+                  AI Konsultasi
                 </Link>
               </li>
             </ul>
@@ -116,19 +117,23 @@ export function Footer() {
           <div className="space-y-3 sm:space-y-4">
             <h3 className="text-base sm:text-lg font-semibold">Hubungi Kami</h3>
             <div className="space-y-2 sm:space-y-3">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-400 text-sm sm:text-base">+62 21 1234 5678</span>
-              </div>
+              <a 
+                href={`https://wa.me/${CONTACT_INFO.phone}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 sm:gap-3 hover:text-green-400 transition-colors touch-target"
+              >
+                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 flex-shrink-0" />
+                <span className="text-gray-400 text-sm sm:text-base">{CONTACT_INFO.phone}</span>
+              </a>
               <div className="flex items-center gap-2 sm:gap-3">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-400 text-sm sm:text-base">info@terdig.com</span>
+                <span className="text-gray-400 text-sm sm:text-base">{CONTACT_INFO.email}</span>
               </div>
               <div className="flex items-start gap-2 sm:gap-3">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 mt-1 flex-shrink-0" />
                 <span className="text-gray-400 text-sm sm:text-base">
-                  Jl. Sudirman No. 123<br />
-                  Jakarta Pusat, 10220
+                  {CONTACT_INFO.address}
                 </span>
               </div>
             </div>
@@ -141,7 +146,7 @@ export function Footer() {
                   placeholder="Email kamu..."
                   className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 text-sm sm:text-base"
                 />
-                <Button className="bg-blue-600 hover:bg-blue-700 touch-target px-3 sm:px-4">
+                <Button className="bg-blue-600 hover:bg-blue-700 touch-target px-3 sm:px-4" aria-label="Subscribe newsletter">
                   <Mail className="w-4 h-4" />
                   <span className="ml-2 sm:hidden">Subscribe</span>
                 </Button>
@@ -154,7 +159,7 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
             <p className="text-gray-400 text-xs sm:text-sm text-center md:text-left">
-              © 2024 TerDig Academy. Semua hak cipta dilindungi.
+              © 2025 TerDig Academy. Semua hak cipta dilindungi.
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm">
               <a href="#" className="text-gray-400 hover:text-white transition-colors touch-target py-1">

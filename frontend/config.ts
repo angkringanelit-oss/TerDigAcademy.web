@@ -1,9 +1,7 @@
 // Configuration file for TerDig frontend application
 
 // API Configuration
-export const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://api.terdig.com' 
-  : 'http://localhost:3000';
+export const API_BASE_URL = 'https://api.terdig.com';
 
 // App Configuration
 export const APP_NAME = 'TerDig';
@@ -12,16 +10,16 @@ export const APP_VERSION = '1.0.0';
 
 // Contact Information
 export const CONTACT_INFO = {
-  phone: '+62 21 1234 5678',
-  whatsapp: '+62 812 3456 7890',
-  email: 'info@terdig.com',
-  address: 'Jl. Sudirman No. 123, Jakarta Pusat, 10220'
+  phone: '62895339329650',
+  whatsapp: '+62 895339329650',
+  email: 'terdig_official@gmail.com',
+  address: 'Jl. Ambokulon Gang I No. 14, Dusun II RT 04 RW 02, Comal-Pemalang'
 };
 
 // Social Media Links
 export const SOCIAL_LINKS = {
   facebook: 'https://facebook.com/terdig',
-  instagram: 'https://instagram.com/terdig',
+  instagram: 'https://www.instagram.com/terdig.official/',
   twitter: 'https://twitter.com/terdig',
   youtube: 'https://youtube.com/terdig',
   linkedin: 'https://linkedin.com/company/terdig'

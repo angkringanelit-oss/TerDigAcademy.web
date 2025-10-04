@@ -528,23 +528,13 @@ export function KonsultasiGratisPage() {
             {/* Contact Info */}
             <Card className="bg-gradient-to-r from-green-500 to-blue-500 text-white">
               <CardContent className="p-6">
-                <h3 className="font-bold text-lg mb-4">Butuh Bantuan?</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5" />
-                    <div>
-                      <p className="font-medium">Hubungi Kami</p>
-                      <p className="text-sm opacity-90">+62 21 1234 5678</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <MessageCircle className="w-5 h-5" />
-                    <div>
-                      <p className="font-medium">WhatsApp</p>
-                      <p className="text-sm opacity-90">+62 812 3456 7890</p>
-                    </div>
-                  </div>
-                </div>
+                <Button 
+                  className="w-full bg-white text-green-600 hover:bg-gray-100 font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2"
+                  onClick={() => window.open('https://wa.me/62895339329650', '_blank')}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Chat WhatsApp Admin
+                </Button>
               </CardContent>
             </Card>
           </div>

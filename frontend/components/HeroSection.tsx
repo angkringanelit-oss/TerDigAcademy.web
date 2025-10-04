@@ -95,7 +95,7 @@ export function HeroSection() {
                 type="button"
               >
                 <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:text-purple-600 group-active:scale-90 group-active:text-purple-700 transition-all duration-200" />
-                Coba AI Kami
+                AI Konsultasi
               </Button>
             </div>
 
@@ -166,13 +166,13 @@ export function HeroSection() {
               </div>
 
               {/* Floating elements around mascots */}
-              <div className="absolute top-6 sm:top-10 -left-4 sm:-left-8 bg-yellow-400 text-white p-2 sm:p-3 rounded-full shadow-lg animate-bounce delay-300">
+              <div className="absolute top-6 sm:top-10 -left-4 sm:-left-8 bg-yellow-400 text-white p-2 sm:p-3 rounded-full shadow-lg animate-bounce delay-300" aria-label="Belajar dengan buku">
                 <BookOpen className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <div className="absolute top-10 sm:top-20 -right-4 sm:-right-8 bg-green-400 text-white p-2 sm:p-3 rounded-full shadow-lg animate-bounce delay-700">
+              <div className="absolute top-10 sm:top-20 -right-4 sm:-right-8 bg-green-400 text-white p-2 sm:p-3 rounded-full shadow-lg animate-bounce delay-700" aria-label="Kreativitas seni">
                 <Palette className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <div className="absolute bottom-10 sm:bottom-20 -left-6 sm:-left-12 bg-purple-400 text-white p-2 sm:p-3 rounded-full shadow-lg animate-bounce delay-1000">
+              <div className="absolute bottom-10 sm:bottom-20 -left-6 sm:-left-12 bg-purple-400 text-white p-2 sm:p-3 rounded-full shadow-lg animate-bounce delay-1000" aria-label="Kreativitas digital">
                 <Sparkles className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
             </div>
