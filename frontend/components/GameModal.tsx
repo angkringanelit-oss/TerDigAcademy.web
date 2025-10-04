@@ -1,5 +1,6 @@
-import { X } from "lucide-react";
+import { X, Gamepad2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "../src/lib/supabaseClient";
 
 // Tipe data untuk game yang akan ditampilkan di modal
 interface Game {
@@ -17,6 +18,7 @@ interface Game {
   mascot: string;
   rewards: string[];
   features: string[];
+  game_url: string; // Tambahkan properti game_url
   component?: React.ComponentType; // Optional untuk kompatibilitas
 }
 
@@ -27,6 +29,35 @@ interface GameModalProps {
 
 export function GameModal({ game, onClose }: GameModalProps) {
   if (!game) return null;
+
+  // Fungsi untuk menambah jumlah plays
+  const trackPlay = async (gameId: string) => {
+    try {
+      // Pertama, dapatkan nilai plays saat ini
+      const { data, error } = await supabase
+        .from("games")
+        .select("plays")
+        .eq("id", gameId)
+        .single();
+
+      if (error) {
+        console.error("Gagal mendapatkan data plays:", error);
+        return;
+      }
+
+      // Kemudian, update plays dengan nilai yang sudah ditambah 1
+      const { error: updateError } = await supabase
+        .from("games")
+        .update({ plays: data.plays + 1 })
+        .eq("id", gameId);
+
+      if (updateError) {
+        console.error("Gagal update plays:", updateError);
+      }
+    } catch (err) {
+      console.error("Error saat update plays:", err);
+    }
+  };
 
   // Menentukan komponen game berdasarkan kategori
   const getGameComponent = () => {
@@ -87,12 +118,29 @@ export function GameModal({ game, onClose }: GameModalProps) {
           <GameComponent />
         </div>
         
-        <div className="p-4 border-t bg-gray-50">
+        <div className="p-4 border-t bg-gray-50 flex justify-between">
           <Button 
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            variant="outline"
           >
-            Kembali ke Daftar Game
+            Kembali
+          </Button>
+          
+          {/* Tombol "Main" yang diperbaiki */}
+          <Button
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+            onClick={() => {
+              trackPlay(game.id);        // Auto +1 plays
+              const newWindow = window.open(game.game_url, "_blank", "noopener,noreferrer"); // Buka tab baru
+              
+              // Fallback jika popup blocker menghalangi
+              if (!newWindow || newWindow.closed) {
+                alert("Link tidak bisa dibuka. Coba lagi nanti.");
+              }
+            }}
+          >
+            <Gamepad2 className="w-4 h-4 mr-2" />
+            Mainkan Game
           </Button>
         </div>
       </div>

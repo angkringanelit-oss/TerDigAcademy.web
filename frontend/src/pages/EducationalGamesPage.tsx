@@ -25,6 +25,7 @@ interface Game {
   mascot: string;
   rewards: string[];
   features: string[];
+  game_url: string; // Tambahkan properti game_url
   component?: React.ComponentType; // Optional untuk kompatibilitas
 }
 
@@ -51,6 +52,35 @@ export function EducationalGamesPage() {
       console.error("Gagal ambil data game:", error);
     }
     setLoading(false);
+  };
+
+  // Fungsi untuk menambah jumlah plays
+  const trackPlay = async (gameId: string) => {
+    try {
+      // Pertama, dapatkan nilai plays saat ini
+      const { data, error } = await supabase
+        .from("games")
+        .select("plays")
+        .eq("id", gameId)
+        .single();
+
+      if (error) {
+        console.error("Gagal mendapatkan data plays:", error);
+        return;
+      }
+
+      // Kemudian, update plays dengan nilai yang sudah ditambah 1
+      const { error: updateError } = await supabase
+        .from("games")
+        .update({ plays: data.plays + 1 })
+        .eq("id", gameId);
+
+      if (updateError) {
+        console.error("Gagal update plays:", updateError);
+      }
+    } catch (err) {
+      console.error("Error saat update plays:", err);
+    }
   };
 
   const openGameModal = (game: Game) => {
@@ -248,13 +278,33 @@ export function EducationalGamesPage() {
                       )}
                     </div>
 
-                    <Button 
-                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white group-hover:shadow-lg transition-all duration-300"
-                      onClick={() => openGameModal(game)}
-                    >
-                      <Play className="w-4 h-4 mr-2" />
-                      Mainkan
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white group-hover:shadow-lg transition-all duration-300"
+                        onClick={() => openGameModal(game)}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Detail
+                      </Button>
+                      
+                      {/* Tombol "Main" yang diperbaiki */}
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                        onClick={() => {
+                          trackPlay(game.id);        // Auto +1 plays
+                          const newWindow = window.open(game.game_url, "_blank", "noopener,noreferrer"); // Buka tab baru
+                          
+                          // Fallback jika popup blocker menghalangi
+                          if (!newWindow || newWindow.closed) {
+                            alert("Link tidak bisa dibuka. Coba lagi nanti.");
+                          }
+                        }}
+                      >
+                        <Gamepad2 className="w-4 h-4 mr-1" />
+                        Main
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
