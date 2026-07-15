@@ -6,7 +6,7 @@ import { HomePage } from "./pages/HomePage";
 import { ProgramPage } from "./pages/ProgramPage";
 import { AboutPage } from "./pages/AboutPage";
 import { GalleryPage } from "./pages/GalleryPage";
-import { TestimonialsPage } from "./pages/TestimonialsPage";
+import { TestimonialsPageEnhanced } from "./pages/TestimonialsPageEnhanced";
 import { AIConsultationPage } from "./pages/AIConsultationPage";
 import { ArticlesPage } from "./pages/ArticlesPage";
 import { ArticleDetailPage } from "./pages/ArticleDetailPage";
@@ -24,7 +24,7 @@ function App() {
               <Route path="/program" element={<ProgramPage />} />
               <Route path="/tentang" element={<AboutPage />} />
               <Route path="/galeri" element={<GalleryPage />} />
-              <Route path="/testimoni" element={<TestimonialsPage />} />
+              <Route path="/testimoni" element={<TestimonialsPageEnhanced />} />
               <Route path="/konsultasi-ai" element={<AIConsultationPage />} />
               <Route path="/artikel" element={<ArticlesPage />} />
               <Route path="/artikel/:slug" element={<ArticleDetailPage />} />
