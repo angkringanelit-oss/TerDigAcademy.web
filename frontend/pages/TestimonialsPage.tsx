@@ -26,33 +26,6 @@ interface Testimonial {
   created_at: string;
 }
 
-const stats = [
-  {
-    icon: Users,
-    number: "1000+",
-    label: "Orang Tua Puas",
-    color: "text-blue-600"
-  },
-  {
-    icon: Star,
-    number: "4.9/5",
-    label: "Rating Rata-rata",
-    color: "text-yellow-500"
-  },
-  {
-    icon: Trophy,
-    number: "95%",
-    label: "Peningkatan Prestasi",
-    color: "text-green-600"
-  },
-  {
-    icon: Heart,
-    number: "98%",
-    label: "Recommend ke Teman",
-    color: "text-pink-500"
-  }
-];
-
 export function TestimonialsPage() {
   const navigate = useNavigate();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -155,22 +128,6 @@ export function TestimonialsPage() {
             />
             <p className="text-sm text-green-600 font-medium">Teman Berkarya Kreatif</p>
           </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-          {stats.map((stat, index) => {
-            const IconComponent = stat.icon;
-            return (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <IconComponent className={`w-12 h-12 mx-auto mb-4 ${stat.color}`} />
-                  <div className="text-3xl font-bold text-gray-900 mb-2">{stat.number}</div>
-                  <p className="text-gray-600 text-sm">{stat.label}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
         </div>
 
         {/* Testimonials Grid */}
