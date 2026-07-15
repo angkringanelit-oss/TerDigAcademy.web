@@ -96,8 +96,12 @@ export function TestimonialsSection() {
 
                 {/* Program Badge */}
                 <div className="mb-4">
-                  <Badge className="text-xs bg-blue-100 text-blue-700">
-                    {testimonial.program}
+                  <Badge className={`text-xs ${
+                    testimonial.program === "Sanggar Seni Digital"
+                      ? "bg-gray-100 text-gray-600"
+                      : "bg-blue-100 text-blue-700"
+                  }`}>
+                    {testimonial.program === "Sanggar Seni Digital" ? "Program Lainnya" : testimonial.program}
                   </Badge>
                 </div>
 
@@ -129,25 +133,7 @@ export function TestimonialsSection() {
           ))}
         </div>
 
-        {/* Updated Stats for TerDig Academy */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-16 border-t border-gray-200">
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">98%</div>
-            <p className="text-gray-600">Kepuasan Orang Tua</p>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-green-600 mb-2">1000+</div>
-            <p className="text-gray-600">Siswa Aktif</p>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">35+</div>
-            <p className="text-gray-600">Program Tersedia</p>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-yellow-600 mb-2">4.9</div>
-            <p className="text-gray-600">Rating Orang Tua</p>
-          </div>
-        </div>
+
       </div>
     </section>
   );

@@ -105,9 +105,11 @@ export function AIConsultationPage() {
       
       setMessages(prev => [...prev, newAiMessage]);
     } catch (error) {
+      const message = error instanceof Error ? error.message : "Terjadi kesalahan pada server AI.";
       logger.error("Error getting AI response:", error);
       
-      setErrorMessage(`🤖 Terjadi kesalahan pada server AI.`);
+      // Tampilkan pesan error spesifik (misal: env var tidak ditemukan)
+      setErrorMessage(`🤖 ${message}`);
     } finally {
       setIsTyping(false);
       // Refocus on input after sending message
