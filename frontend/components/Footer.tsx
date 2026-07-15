@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { BookOpen, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube, Music } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Logo } from "./Logo";
 import { CONTACT_INFO, SOCIAL_LINKS } from "../config";
@@ -15,8 +15,7 @@ export function Footer() {
             <Logo size="sm" showText={true} textColor="white" className="sm:hidden" />
             <Logo size="md" showText={true} textColor="white" className="hidden sm:block" />
             <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
-              Platform pendidikan digital terdepan dengan dua pilar: Bimbel TerDig untuk prestasi akademik 
-              dan Sanggar Seni Digital untuk kreativitas tanpa batas.
+              Platform bimbel akademik digital untuk TK/PAUD & SD. Dipandu tutor profesional dan didukung AI Tutor pribadi 24/7 untuk hasil belajar maksimal.
             </p>
             <div className="flex gap-3 sm:gap-4">
               <a href={SOCIAL_LINKS.facebook} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors touch-target" aria-label="Facebook">
@@ -31,6 +30,9 @@ export function Footer() {
               <a href={SOCIAL_LINKS.youtube} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-red-600 transition-colors touch-target" aria-label="YouTube">
                 <Youtube className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
+              <a href={SOCIAL_LINKS.tiktok} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-black transition-colors touch-target" aria-label="TikTok">
+                <Music className="w-4 h-4 sm:w-5 sm:h-5" />
+              </a>
             </div>
           </div>
 
@@ -39,28 +41,13 @@ export function Footer() {
             <h3 className="text-base sm:text-lg font-semibold">Menu Utama</h3>
             <ul className="space-y-2 sm:space-y-3">
               <li>
+                <Link to="/" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
+                  Beranda
+                </Link>
+              </li>
+              <li>
                 <Link to="/program" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
                   Program
-                </Link>
-              </li>
-              <li>
-                <Link to="/video-edukasi" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Video Edukasi
-                </Link>
-              </li>
-              <li>
-                <Link to="/game-edukatif" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Game Edukatif
-                </Link>
-              </li>
-              <li>
-                <Link to="/tentang" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Tentang Kami
-                </Link>
-              </li>
-              <li>
-                <Link to="/galeri" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Galeri & Event
                 </Link>
               </li>
               <li>
@@ -69,8 +56,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/artikel" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
+                  Artikel
+                </Link>
+              </li>
+              <li>
                 <Link to="/konsultasi-ai" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  AI Konsultasi
+                  Coba AI Tutor
                 </Link>
               </li>
             </ul>
@@ -87,27 +79,22 @@ export function Footer() {
               </li>
               <li>
                 <Link to="/program" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Sanggar Seni Digital
+                  Program Calistung
                 </Link>
               </li>
               <li>
-                <Link to="/video-edukasi" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Video Interaktif
+                <Link to="/daftar" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
+                  Kelas Prompting Anak
                 </Link>
               </li>
               <li>
-                <Link to="/game-edukatif" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Game Edukatif
-                </Link>
-              </li>
-              <li>
-                <Link to="/konsultasi-gratis" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  Konsultasi Gratis
+                <Link to="/daftar" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
+                  Kelas AI untuk Guru
                 </Link>
               </li>
               <li>
                 <Link to="/konsultasi-ai" className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base touch-target block py-1">
-                  AI Konsultasi
+                  Konsultasi AI
                 </Link>
               </li>
             </ul>
@@ -159,7 +146,7 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
             <p className="text-gray-400 text-xs sm:text-sm text-center md:text-left">
-              © 2025 TerDig Academy. Semua hak cipta dilindungi.
+              © 2026 TerDig Academy. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm">
               <a href="#" className="text-gray-400 hover:text-white transition-colors touch-target py-1">

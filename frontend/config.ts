@@ -21,8 +21,8 @@ export const SOCIAL_LINKS = {
   facebook: 'https://facebook.com/terdig',
   instagram: 'https://www.instagram.com/terdig.official/',
   twitter: 'https://twitter.com/terdig',
-  youtube: 'https://youtube.com/terdig',
-  linkedin: 'https://linkedin.com/company/terdig'
+  youtube: 'https://youtube.com/terdig-academy',
+  tiktok: 'https://www.tiktok.com/@terdigacademy'
 };
 
 // Feature Flags
@@ -56,7 +56,10 @@ export const SERVICES = {
   sentryDsn: '',
   
   // Crisp chat widget
-  crispWebsiteId: ''
+  crispWebsiteId: '',
+  
+  // Groq Proxy URL
+  groqProxyUrl: import.meta.env.VITE_GROQ_PROXY_URL || 'https://pnorvxmagvucopoxcshn.supabase.co/functions/v1/groq-proxy'
 };
 
 // Image and Asset Configuration

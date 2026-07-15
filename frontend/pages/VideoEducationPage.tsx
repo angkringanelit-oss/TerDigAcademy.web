@@ -8,6 +8,7 @@ import starKidsImg from "../assets/Star Kids.png";
 import quenChlidImg from "../assets/Quen Child.png";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import { logger } from "@/lib/logger";
 
 type Video = {
   id: number;
@@ -56,7 +57,7 @@ export function VideoEducationPage() {
 
     const { data, error } = await query;
     if (error) {
-      console.error("Error fetching videos:", error);
+      logger.error("Error fetching videos:", error);
     } else {
       setVideos(data || []);
     }

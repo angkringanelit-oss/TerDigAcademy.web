@@ -1,0 +1,45 @@
+-- Create articles table
+CREATE TABLE IF NOT EXISTS public.articles (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    excerpt TEXT,
+    content TEXT,
+    image_url TEXT,
+    category TEXT,
+    author TEXT,
+    published_at TIMESTAMPTZ,
+    is_published BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS (Row Level Security)
+ALTER TABLE public.articles ENABLE ROW LEVEL SECURITY;
+
+-- Create policy to allow public read access to published articles
+CREATE POLICY "Allow public read access to published articles" 
+ON public.articles FOR SELECT 
+TO PUBLIC 
+USING (is_published = true);
+
+-- Add trigger to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_articles_updated_at 
+BEFORE UPDATE ON public.articles 
+FOR EACH ROW 
+EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert sample data
+INSERT INTO public.articles (id, title, slug, excerpt, content, image_url, category, author, published_at, is_published, created_at, updated_at) VALUES
+('1', 'Mengenal Dunia Digital untuk Anak-anak', 'mengenal-dunia-digital-untuk-anak-anak', 'Panduan lengkap untuk membantu anak memahami teknologi digital dengan aman dan menyenangkan.', '<p>Di era digital saat ini, anak-anak mulai mengenal teknologi sejak dini. Penting bagi orang tua untuk memahami bagaimana cara terbaik memperkenalkan dunia digital kepada anak dengan aman dan menyenangkan.</p><p>Artikel ini akan membahas berbagai aspek teknologi digital yang relevan untuk anak-anak, termasuk:</p><ul><li>Pengenalan konsep dasar komputer dan internet</li><li>Cara menggunakan perangkat digital dengan aman</li><li>Manfaat teknologi digital dalam pembelajaran</li><li>Potensi risiko dan cara menghindarinya</li></ul><p>Dengan pendekatan yang tepat, teknologi digital dapat menjadi alat yang sangat bermanfaat dalam mendukung perkembangan anak.</p>', 'https://images.unsplash.com/photo-1519589160466-96a0e9a5a1e5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80', 'Teknologi', 'Tim TerDig Academy', '2025-10-11 10:39:05.871167+00', true, '2025-10-11 10:39:05.871167+00', '2025-10-11 10:39:05.871167+00'),
+('2', 'Tips Belajar Efektif dengan AI', 'tips-belajar-efektif-dengan-ai', 'Cara memanfaatkan kecerdasan buatan untuk meningkatkan efektivitas belajar anak di rumah.', '<p>Kecerdasan Buatan (AI) telah membuka banyak peluang baru dalam dunia pendidikan. Dengan alat-alat AI yang tepat, proses belajar anak bisa menjadi lebih efektif dan menyenangkan.</p><p>Berikut adalah beberapa tips untuk memanfaatkan AI dalam mendukung pembelajaran anak:</p><ol><li>Gunakan chatbot edukatif untuk menjawab pertanyaan anak secara instan</li><li>Manfaatkan aplikasi AI untuk membuat materi belajar yang disesuaikan dengan kebutuhan anak</li><li>Gunakan alat AI untuk memberikan umpan balik yang cepat dan akurat</li><li>Terapkan sistem pembelajaran adaptif yang menyesuaikan dengan kecepatan belajar anak</li></ol><p>Dengan pendekatan yang tepat, AI dapat menjadi asisten belajar yang luar biasa bagi anak-anak.</p>', 'https://images.unsplash.com/photo-1677442135722-5f11e06a4e6d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80', 'Pendidikan', 'Tim TerDig Academy', '2025-10-11 10:39:05.871167+00', true, '2025-10-11 10:39:05.871167+00', '2025-10-11 10:39:05.871167+00'),
+('3', 'Kreativitas Anak di Era Digital', 'kreativitas-anak-di-era-digital', 'Bagaimana teknologi digital dapat meningkatkan kreativitas anak melalui berbagai media dan platform.', '<p>Era digital membuka banyak kesempatan bagi anak untuk mengekspresikan kreativitas mereka. Dengan berbagai aplikasi dan platform digital, anak dapat mengeksplorasi potensi kreatif mereka dengan cara yang tidak pernah ada sebelumnya.</p><p>Beberapa cara teknologi digital dapat meningkatkan kreativitas anak:</p><ul><li>Digital art dan desain grafis</li><li>Pembuatan video dan animasi</li><li>Pengembangan game sederhana</li><li>Penulisan dan publikasi digital</li><li>Musik dan produksi audio digital</li></ul><p>Penting bagi orang tua untuk memberikan arahan yang tepat agar anak dapat memanfaatkan teknologi digital untuk mengembangkan kreativitas mereka secara positif.</p>', 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80', 'Kreativitas', 'Tim TerDig Academy', '2025-10-11 10:39:05.871167+00', true, '2025-10-11 10:39:05.871167+00', '2025-10-11 10:39:05.871167+00')
+ON CONFLICT (id) DO NOTHING;

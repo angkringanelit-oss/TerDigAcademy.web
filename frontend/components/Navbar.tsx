@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Menu, X, BookOpen, Brain, Users, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, Sparkles, GraduationCap } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
 
@@ -12,19 +11,16 @@ export function Navbar() {
   const navigation = [
     { name: "Beranda", href: "/" },
     { name: "Program", href: "/program" },
-    { name: "Video Edukasi", href: "/video-edukasi" },
-    { name: "Game Edukatif", href: "/game-edukatif" },
-    { name: "Tentang Kami", href: "/tentang" },
-    { name: "Galeri & Event", href: "/galeri" },
+    { name: "Coba AI Tutor", href: "/konsultasi-ai", highlight: true },
     { name: "Testimoni", href: "/testimoni" },
-    { name: "AI Konsultasi", href: "/konsultasi-ai" }
+    { name: "Artikel", href: "/artikel" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="bg-gradient-to-r from-indigo-900 via-purple-900 to-gray-900 shadow-lg border-b border-purple-700 sticky top-0 z-50">
-      <div className="container mx-auto mobile-padding">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Logo */}
           <div className="flex items-center">
@@ -35,41 +31,55 @@ export function Navbar() {
                 TerDig Academy
               </h1>
               <p className="text-xs text-purple-200 hidden sm:block mt-2">
-                Bimbel & Sanggar Seni Digital
+                Bimbel Akademik Digital
               </p>
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center responsive-gap">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`text-xs xl:text-sm font-medium transition-colors hover:text-blue-300 touch-target flex items-center justify-center ${
-                  isActive(item.href) 
-                    ? "text-blue-300 border-b-2 border-blue-300 pb-1" 
-                    : "text-purple-100"
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+          <div className="hidden lg:flex items-center gap-2 xl:gap-4">
+            {navigation.map((item) =>
+              item.highlight ? (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`relative group text-xs xl:text-sm font-semibold transition-all duration-300 touch-target flex items-center justify-center px-3 py-1.5 rounded-full ${
+                    isActive(item.href)
+                      ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30"
+                      : "text-purple-100 hover:text-white hover:bg-purple-800/40"
+                  }`}
+                >
+                  {!isActive(item.href) && (
+                    <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+                  )}
+                  <Sparkles className="w-3.5 h-3.5 xl:w-4 xl:h-4 mr-1.5 text-yellow-300" />
+                  {item.name}
+                </Link>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`text-xs xl:text-sm font-medium transition-colors hover:text-blue-300 touch-target flex items-center justify-center px-2 py-1 ${
+                    isActive(item.href)
+                      ? "text-blue-300 border-b-2 border-blue-300"
+                      : "text-purple-100"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )
+            )}
           </div>
 
-          {/* Desktop CTA Buttons */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-4">
-            <Link to="/konsultasi-gratis">
-              <Button variant="outline" size="sm" className="border-green-500 text-green-600 hover:bg-green-50 text-xs xl:text-sm touch-target">
-                <Phone className="w-3 h-3 xl:w-4 xl:h-4 mr-1 xl:mr-2" />
-                <span className="hidden xl:inline">Konsultasi Gratis</span>
-                <span className="xl:hidden">Konsultasi</span>
-              </Button>
-            </Link>
-            <Link to="/program">
-              <Button size="sm" className="bg-gradient-to-r from-yellow-400 to-green-500 hover:from-yellow-500 hover:to-green-600 text-white font-semibold text-xs xl:text-sm touch-target">
-                <span className="hidden xl:inline">Jelajahi Program</span>
-                <span className="xl:hidden">Program</span>
+          {/* Desktop CTA Button */}
+          <div className="hidden lg:flex items-center">
+            <Link to="/daftar">
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-xs xl:text-sm touch-target shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300"
+              >
+                <GraduationCap className="w-3.5 h-3.5 xl:w-4 xl:h-4 mr-1.5" />
+                Daftar Bimbel
               </Button>
             </Link>
           </div>
@@ -89,30 +99,44 @@ export function Navbar() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="lg:hidden border-t border-gray-200 py-3 sm:py-4">
+          <div className="lg:hidden border-t border-purple-700/50 py-3 sm:py-4">
             <div className="space-y-3 sm:space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`block text-sm font-medium transition-colors hover:text-blue-300 py-2 px-2 rounded-md touch-target ${
-                    isActive(item.href) ? "text-blue-300 bg-purple-800/50" : "text-purple-100"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <div className="pt-3 sm:pt-4 space-y-2 sm:space-y-3 border-t border-gray-100">
-                <Link to="/konsultasi-gratis" onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full border-green-500 text-green-600 hover:bg-green-50 touch-target">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Konsultasi Gratis
-                  </Button>
-                </Link>
-                <Link to="/program" onClick={() => setIsOpen(false)}>
-                  <Button size="sm" className="w-full bg-gradient-to-r from-yellow-400 to-green-500 hover:from-yellow-500 hover:to-green-600 text-white font-semibold touch-target">
-                    Jelajahi Program
+              {navigation.map((item) =>
+                item.highlight ? (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`flex items-center text-sm font-semibold transition-all duration-200 py-2 px-3 rounded-lg touch-target ${
+                      isActive(item.href)
+                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+                        : "text-purple-100 hover:bg-purple-800/40"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2 text-yellow-300" />
+                    {item.name}
+                  </Link>
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`block text-sm font-medium transition-colors hover:text-blue-300 py-2 px-2 rounded-md touch-target ${
+                      isActive(item.href) ? "text-blue-300 bg-purple-800/50" : "text-purple-100"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              )}
+              <div className="pt-3 sm:pt-4 border-t border-purple-700/50">
+                <Link to="/daftar" onClick={() => setIsOpen(false)}>
+                  <Button
+                    size="sm"
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold touch-target shadow-lg"
+                  >
+                    <GraduationCap className="w-4 h-4 mr-2" />
+                    Daftar Bimbel
                   </Button>
                 </Link>
               </div>

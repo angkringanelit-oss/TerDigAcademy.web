@@ -11,6 +11,7 @@ import { SuccessModal } from "../components/SuccessModal";
 import { useRegistration } from "../hooks/useRegistration";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { logger } from "@/lib/logger";
 
 const packages = [
   {
@@ -305,7 +306,7 @@ export function PaketLengkapPage() {
         description: response.message,
       });
     } catch (error: any) {
-      console.error("Package registration error:", error);
+      logger.error("Package registration error:", error);
       toast({
         title: "Pendaftaran Gagal",
         description: error.message || "Terjadi kesalahan saat mendaftar paket. Silakan coba lagi.",
@@ -500,7 +501,7 @@ export function PaketLengkapPage() {
                       pkg.popular 
                         ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl' 
                         : pkg.isNew
-                        ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl'
+                        ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl'
                         : selectedPackage === pkg.id
                         ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg'
                         : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-600'

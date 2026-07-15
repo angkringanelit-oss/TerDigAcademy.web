@@ -1,43 +1,20 @@
-import { useState, useEffect } from "react";
+// src/pages/EducationalGamesPage.tsx
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gamepad2, Play, Star, Zap, Trophy, Heart, Plus, Edit, Trash2 } from "lucide-react";
-import { GameModal } from "../components/GameModal";
-import { GameFormModal } from "../components/GameFormModal";
-import MathQuiz from "../src/games/MathQuiz";
-import WordDetective from "../src/games/WordDetective";
-import starKidsImg from "../assets/Star Kids.png";
-import quenChlidImg from "../assets/Quen Child.png";
-import { supabase } from "../src/lib/supabaseClient";
+import { Gamepad2, Play, Star, Zap, Trophy, Heart, Users, RefreshCw } from "lucide-react";
+import { GameModal } from "@/components/GameModal";
+import starKidsImg from "@/assets/Star Kids.png";
+import quenChlidImg from "@/assets/Quen Child.png";
+import { supabase } from "@/lib/supabaseClient";
+import { logger } from "@/lib/logger";
 
-// Tipe data untuk game dari database
-interface DatabaseGame {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  difficulty: string;
-  age_group: string;
-  players: string;
-  duration: string;
-  rating: number;
-  plays: number;
-  thumbnail: string;
-  mascot: string;
-  game_url: string;
-  source: string;
-  created_at: string;
-}
-
-// Tipe data untuk game yang akan ditampilkan
+// ----------  T Y P E  ----------
 interface Game {
   id: string;
   title: string;
-  category: string;
-  component: React.ComponentType;
-  icon: React.ComponentType<any>;
-  color: string;
   description: string;
+  category: string;
   difficulty: string;
   age_group: string;
   players: string;
@@ -46,467 +23,328 @@ interface Game {
   plays: number;
   thumbnail: string;
   mascot: string;
+  rewards: any; // Bisa berupa array atau objek
+  features: any; // Bisa berupa array atau objek
   game_url: string;
-  source: string;
+  embed_url?: string; // Tambahkan properti embed_url
+  embed_height?: number; // Tambahkan properti embed_height
+  is_published: boolean;
+  created_at: string;
 }
 
-const gameComponents: Record<string, { component: React.ComponentType, icon: React.ComponentType<any>, color: string }> = {
-  "math-quiz": {
-    component: MathQuiz,
-    icon: Zap,
-    color: "from-blue-400 to-purple-500"
-  },
-  "word-detective": {
-    component: WordDetective,
-    icon: Star,
-    color: "from-blue-500 to-teal-500"
-  }
-};
-
-const features = [
-  {
-    icon: Trophy,
-    title: "Penghargaan",
-    description: "Dapatkan lencana dan penghargaan untuk setiap pencapaian"
-  },
-  {
-    icon: Heart,
-    title: "Belajar Sambil Bermain",
-    description: "Pengalaman belajar yang menyenangkan dan edukatif"
-  },
-  {
-    icon: Star,
-    title: "Tantangan Seru",
-    description: "Berbagai level tantangan yang menarik dan memotivasi"
-  }
+// ----------  K O N S T A N T A  ----------
+const gameCategories = [
+  { id: "all", name: "Semua Game", icon: Gamepad2, color: "bg-blue-500" },
+  { id: "matematika", name: "Matematika", icon: Zap, color: "bg-green-500" },
+  { id: "bahasa", name: "Bahasa", icon: Star, color: "bg-purple-500" },
+  { id: "seni", name: "Seni & Kreativitas", icon: Heart, color: "bg-pink-500" },
+  { id: "logika", name: "Logika & Puzzle", icon: Trophy, color: "bg-orange-500" },
+  { id: "karakter", name: "Karakter", icon: Heart, color: "bg-red-500" }
 ];
 
+const difficultyColors = {
+  Mudah: "bg-green-100 text-green-700 border-green-200",
+  Sedang: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  Sulit: "bg-red-100 text-red-700 border-red-200"
+};
+
+// ----------  H E L P E R  ----------
+/* Supabase on-the-fly: 16:9, auto WebP, quality 80% */
+const resizeThumb = (url: string) =>
+  url.includes("supabase.co")
+    ? `${url}?resize=cover&format=auto&quality=80`
+    : url;
+
+// ----------  C O M P O N E N T  ----------
 export function EducationalGamesPage() {
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false); // Untuk mode admin (edit/delete)
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [editingGame, setEditingGame] = useState<DatabaseGame | null>(null);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
 
+  // Tambahkan logging untuk debugging
+  logger.debug("EducationalGamesPage render:", { games, loading, selectedCategory, selectedDifficulty });
+
+  // Fetch + Realtime
   useEffect(() => {
+    logger.debug("EducationalGamesPage useEffect running");
+    // Panggil fetchGames tanpa menunggu
     fetchGames();
+    
+    const channel = supabase
+      .channel("games-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "games" }, fetchGames)
+      .subscribe();
+
+    // Return cleanup function
+    return () => {
+      // Membersihkan channel saat komponen di-unmount
+      logger.debug("Cleaning up games channel");
+      channel.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchGames = async () => {
+    setLoading(true);
+    logger.debug("Memulai fetch games dari Supabase");
     try {
-      setLoading(true);
-      // Mengambil data dari tabel games di Supabase
       const { data, error } = await supabase
-        .from('games')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("games")
+        .select("*")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
 
-      if (error) {
-        throw error;
-      }
-
-      // Mengonversi data dari database ke format yang digunakan di UI
-      const formattedGames: Game[] = data.map((game: DatabaseGame) => {
-        // Menentukan komponen game berdasarkan kategori atau ID
-        const gameId = getGameIdFromCategory(game.category);
-        const gameInfo = gameComponents[gameId] || gameComponents["math-quiz"]; // Default ke math-quiz jika tidak ditemukan
-        
-        return {
-          id: game.id,
-          title: game.title,
-          category: game.category,
-          component: gameInfo.component,
-          icon: gameInfo.icon,
-          color: gameInfo.color,
-          description: game.description,
-          difficulty: game.difficulty,
-          age_group: game.age_group,
-          players: game.players,
-          duration: game.duration,
-          rating: game.rating,
-          plays: game.plays,
-          thumbnail: game.thumbnail,
-          mascot: game.mascot,
-          game_url: game.game_url,
-          source: game.source
-        };
-      });
-
-      // Jika tidak ada data dari database, gunakan data default
-      if (formattedGames.length === 0) {
-        setGames(getDefaultGames());
-      } else {
-        setGames(formattedGames);
-      }
+      logger.debug("Respons dari Supabase:", { data, error });
       
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching games:", err);
-      setError("Gagal memuat data games. Menampilkan data default.");
-      // Jika terjadi error, gunakan data default
-      setGames(getDefaultGames());
-      setLoading(false);
-    }
-  };
-
-  const getDefaultGames = (): Game[] => {
-    return [
-      {
-        id: "math-quiz",
-        title: "Math Pop Quiz",
-        category: "Matematika",
-        component: MathQuiz,
-        icon: Zap,
-        color: "from-blue-400 to-purple-500",
-        description: "Uji kemampuan matematikamu dengan serangkaian soal yang menantang!",
-        difficulty: "Sedang",
-        age_group: "6-12 tahun",
-        players: "1",
-        duration: "10-15 menit",
-        rating: 4.8,
-        plays: 1500,
-        thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-        mascot: "Star Kids",
-        game_url: "https://wordwall.net/resource/12345/math-quiz",
-        source: "wordwall"
-      },
-      {
-        id: "word-detective",
-        title: "Word Detective: Tebak Kata Kosmik",
-        category: "Bahasa",
-        component: WordDetective,
-        icon: Star,
-        color: "from-blue-500 to-teal-500",
-        description: "Jelajahi dunia kosmik sambil belajar kosakata baru dalam bahasa Indonesia!",
-        difficulty: "Mudah",
-        age_group: "5-10 tahun",
-        players: "1-4",
-        duration: "15-20 menit",
-        rating: 4.9,
-        plays: 2200,
-        thumbnail: "https://img.youtube.com/vi/4GuqkCXf2z0/hqdefault.jpg",
-        mascot: "Quen Child",
-        game_url: "https://wordwall.net/resource/67890/word-detective",
-        source: "wordwall"
+      if (!error && data) {
+        logger.debug("Data diterima, memproses:", data.length, "items");
+        const parsed: Game[] = data.map((g: any) => {
+          // Tangani struktur rewards dan features yang berbeda
+          let rewards = [];
+          let features = [];
+          
+          if (Array.isArray(g.rewards)) {
+            rewards = g.rewards;
+          } else if (g.rewards && typeof g.rewards === 'object') {
+            // Jika rewards adalah objek, ubah ke array
+            if (g.rewards.badges) {
+              rewards = Array.isArray(g.rewards.badges) ? g.rewards.badges : [g.rewards.badges];
+            }
+          } else if (typeof g.rewards === 'string') {
+            // Jika rewards adalah string JSON, parse dulu
+            try {
+              const parsed = JSON.parse(g.rewards);
+              rewards = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) {
+              rewards = [g.rewards];
+            }
+          }
+          
+          if (Array.isArray(g.features)) {
+            features = g.features;
+          } else if (g.features && typeof g.features === 'object') {
+            // Jika features adalah objek, ubah ke array
+            features = Object.keys(g.features).map(key => `${key}: ${g.features[key]}`);
+          } else if (typeof g.features === 'string') {
+            // Jika features adalah string JSON, parse dulu
+            try {
+              const parsed = JSON.parse(g.features);
+              features = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) {
+              features = [g.features];
+            }
+          }
+          
+          const result = {
+            ...g,
+            rewards,
+            features
+          };
+          
+          logger.debug("Game diproses:", result);
+          return result;
+        });
+        logger.debug("Data diproses, mengatur state:", parsed.length, "items");
+        setGames(parsed);
+      } else {
+        logger.error("Gagal ambil game:", error);
       }
-    ];
-  };
-
-  const getGameIdFromCategory = (category: string): string => {
-    // Mapping kategori ke ID game
-    const categoryMap: Record<string, string> = {
-      "Matematika": "math-quiz",
-      "Bahasa": "word-detective"
-    };
-    
-    return categoryMap[category] || "math-quiz";
-  };
-
-  // Fungsi untuk menambahkan game baru
-  const addGame = async (newGame: any) => {
-    try {
-      const { data, error } = await supabase
-        .from('games')
-        .insert([newGame])
-        .select();
-
-      if (error) throw error;
-
-      // Refresh daftar games
-      fetchGames();
-      return { success: true, data };
     } catch (err) {
-      console.error("Error adding game:", err);
-      return { success: false, error: (err as Error).message || "Unknown error" };
+      logger.error("Error fetching games:", err);
+    } finally {
+      logger.debug("Selesai fetch games");
+      setLoading(false);
     }
   };
 
-  // Fungsi untuk memperbarui game
-  const updateGame = async (id: string, updatedGame: any) => {
+  // Tambah plays
+  const trackPlay = async (gameId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('games')
-        .update(updatedGame)
-        .eq('id', id)
-        .select();
-
-      if (error) throw error;
-
-      // Refresh daftar games
-      fetchGames();
-      return { success: true, data };
+      const { data } = await supabase.from("games").select("plays").eq("id", gameId).single();
+      const newPlays = (data?.plays || 0) + 1;
+      await supabase.from("games").update({ plays: newPlays }).eq("id", gameId);
+      setGames(prev => prev.map(g => (g.id === gameId ? { ...g, plays: newPlays } : g)));
     } catch (err) {
-      console.error("Error updating game:", err);
-      return { success: false, error: (err as Error).message || "Unknown error" };
+      logger.error("Error tracking play:", err);
     }
   };
 
-  // Fungsi untuk menghapus game
-  const deleteGame = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('games')
-        .delete()
-        .eq('id', id);
+  // Filter
+  const filtered = games.filter(g =>
+    (selectedCategory === "all" || g.category === selectedCategory) &&
+    (selectedDifficulty === "all" || g.difficulty === selectedDifficulty)
+  );
 
-      if (error) throw error;
+  // Icon & color helper
+  const getIcon = (cat: string) =>
+    cat === "matematika" ? Zap : cat === "bahasa" ? Star : Gamepad2;
+  const getColor = (cat: string) =>
+    cat === "matematika"
+      ? "from-blue-400 to-purple-500"
+      : cat === "bahasa"
+      ? "from-blue-500 to-teal-500"
+      : "from-purple-500 to-pink-500";
 
-      // Refresh daftar games
-      fetchGames();
-      return { success: true };
-    } catch (err) {
-      console.error("Error deleting game:", err);
-      return { success: false, error: (err as Error).message || "Unknown error" };
-    }
-  };
-
-  const openGameModal = (game: Game) => {
-    setSelectedGame(game);
-  };
-
-  const closeGameModal = () => {
-    setSelectedGame(null);
-  };
-
-  const toggleAdminMode = () => {
-    setIsAdmin(!isAdmin);
-  };
-
-  const openFormModal = (game?: DatabaseGame) => {
-    setEditingGame(game || null);
-    setShowFormModal(true);
-  };
-
-  const closeFormModal = () => {
-    setShowFormModal(false);
-    setEditingGame(null);
-  };
-
-  if (loading) {
+  // UI Loading
+  if (loading)
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-5 via-pink-50 to-yellow-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Memuat data games...</p>
         </div>
       </div>
     );
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50">
-      {/* Hero Section with Animated Mascots */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-pink-50 to-yellow-50">
+      {/* HERO */}
       <section className="relative pt-20 pb-16 overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <div className="flex justify-center items-center gap-8 mb-8">
-              <div className="hidden lg:block animate-bounce hover:animate-pulse transition-all duration-300" style={{ animationDelay: '0s', animationDuration: '2s' }}>
-                <img 
-                  src={starKidsImg} 
-                  alt="Star Kids" 
-                  className="w-32 h-32 object-contain drop-shadow-2xl hover:scale-110 transition-transform duration-300"
-                />
+            <h1 className="text-center text-2xl font-bold text-indigo-700 mb-6">
+              🎮 Pilih Game Edukatifmu!
+            </h1>
+            <div className="flex flex-col lg:flex-row justify-center items-center gap-8 mb-8">
+              <div className="animate-bounce" style={{ animationDuration: "2s" }}>
+                <img src={starKidsImg} alt="Star Kids" className="w-40 h-40 md:w-48 md:h-48 object-contain drop-shadow-2xl hover:scale-110 transition-transform" />
               </div>
-              <div>
-                <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-yellow-600 bg-clip-text text-transparent mb-4 animate-pulse">
+              <div className="text-center lg:text-left">
+                <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-yellow-600 bg-clip-text text-transparent mb-4">
                   Game Edukatif
                 </h1>
                 <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
                   Belajar sambil bermain dengan game edukatif yang seru dan menantang
                 </p>
-                <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600 mt-6">
-                  <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <Zap className="w-4 h-4 text-yellow-500" />
-                    <span>50K+ Pemain Aktif</span>
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-sm">
+                  <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full">
+                    <Users className="w-4 h-4 text-yellow-500" /> <span>50K+ Pemain Aktif</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <Trophy className="w-4 h-4 text-purple-500" />
-                    <span>1000+ Game Dimainkan</span>
+                  <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full">
+                    <Trophy className="w-4 h-4 text-purple-500" /> <span>1000+ Game Dimainkan</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <Star className="w-4 h-4 text-pink-500" />
-                    <span>Rating 4.9/5</span>
+                  <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full">
+                    <Star className="w-4 h-4 text-pink-500" /> <span>Rating 4.9/5</span>
                   </div>
                 </div>
               </div>
-              <div className="hidden lg:block animate-bounce hover:animate-pulse transition-all duration-300" style={{ animationDelay: '1s', animationDuration: '2s' }}>
-                <img 
-                  src={quenChlidImg} 
-                  alt="Quen Child" 
-                  className="w-32 h-32 object-contain drop-shadow-2xl hover:scale-110 transition-transform duration-300"
-                />
+              <div className="animate-bounce" style={{ animationDuration: "2s", animationDelay: "1s" }}>
+                <img src={quenChlidImg} alt="Quen Child" className="w-40 h-40 md:w-48 md:h-48 object-contain drop-shadow-2xl hover:scale-110 transition-transform" />
               </div>
-            </div>
-            
-            {/* Tombol Admin Mode */}
-            <div className="mt-4">
-              <Button 
-                onClick={toggleAdminMode}
-                className={`${isAdmin ? 'bg-red-500 hover:bg-red-600' : 'bg-purple-500 hover:bg-purple-600'} text-white`}
-              >
-                {isAdmin ? 'Keluar Mode Admin' : 'Masuk Mode Admin'}
-              </Button>
             </div>
           </div>
         </div>
-        
-        {/* Floating elements for visual interest */}
+        {/* elemen hias */}
         <div className="absolute top-20 left-10 w-16 h-16 rounded-full bg-yellow-300 opacity-20 animate-ping"></div>
-        <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full bg-pink-300 opacity-20 animate-ping" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/3 right-20 w-12 h-12 rounded-full bg-purple-300 opacity-20 animate-ping" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full bg-pink-300 opacity-20 animate-ping" style={{ animationDelay: "1s" }}></div>
       </section>
 
-      {/* Features Section */}
+      {/* FITUR */}
       <section className="py-12 bg-white/50 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <div key={index} className="text-center p-6 bg-white/70 rounded-2xl border border-white/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="font-bold text-gray-800 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm">{feature.description}</p>
+            {[
+              { icon: Trophy, title: "Penghargaan", desc: "Dapatkan lencana dan penghargaan untuk setiap pencapaian" },
+              { icon: Heart, title: "Belajar Sambil Bermain", desc: "Pengalaman belajar yang menyenangkan dan edukatif" },
+              { icon: Star, title: "Tantangan Seru", desc: "Berbagai level tantangan yang menarik dan memotivasi" }
+            ].map((f, i) => (
+              <div key={i} className="text-center p-6 bg-white/70 rounded-2xl border border-white/20 hover:shadow-xl hover:-translate-y-2 transition-all">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <f.icon className="w-8 h-8 text-white" />
                 </div>
-              );
-            })}
+                <h3 className="font-bold text-gray-800 mb-2">{f.title}</h3>
+                <p className="text-gray-600 text-sm">{f.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Games Section */}
-      <div className="container mx-auto px-4 py-8">
-        {error && (
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded">
-            <p>{error}</p>
-          </div>
-        )}
-        
-        {/* Tombol tambah game (hanya muncul di mode admin) */}
-        {isAdmin && (
-          <div className="mb-6">
-            <Button 
-              onClick={() => openFormModal()}
-              className="bg-green-500 hover:bg-green-600 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Tambah Game Baru
+      {/* FILTER */}
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">Daftar Game Edukatif</h2>
+            <Button onClick={fetchGames} size="sm" className="flex items-center gap-2">
+              <RefreshCw className="w-4 h-4" /> Refresh Data
             </Button>
           </div>
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Kategori */}
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-800 mb-4">Kategori Game</h3>
+              <div className="flex flex-wrap gap-3">
+                {gameCategories.map((cat) => {
+                  const Icon = cat.icon;
+                  return (
+                    <Button
+                      key={cat.id}
+                      variant={selectedCategory === cat.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`${selectedCategory === cat.id ? cat.color + " text-white" : "hover:" + cat.color + " hover:text-white"} transition-all`}
+                    >
+                      <Icon className="w-4 h-4 mr-2" /> {cat.name}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+            {/* Kesulitan */}
+            <div>
+              <h3 className="font-semibold text-gray-800 mb-4">Tingkat Kesulitan</h3>
+              <div className="flex gap-3">
+                {["all", "Mudah", "Sedang", "Sulit"].map((d) => (
+                  <Button
+                    key={d}
+                    variant={selectedDifficulty === d ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedDifficulty(d)}
+                  >
+                    {d === "all" ? "Semua" : d}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DAFTAR GAME */}
+      <div className="container mx-auto px-4 py-8">
+        {filtered.length === 0 && !loading && (
+          <p className="text-center text-gray-500">Tidak ada game yang tersedia.</p>
         )}
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {games.map((game) => {
-            const IconComponent = game.icon;
-            return (
-              <Card key={game.id} className="group hover:shadow-2xl transition-all duration-300 bg-white/90 backdrop-blur-sm border-0 overflow-hidden transform hover:-translate-y-2">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg group-hover:text-purple-600 transition-colors leading-tight">
-                        {game.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm mt-1">
-                        <span className="inline-block px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
-                          {game.category}
-                        </span>
-                      </CardDescription>
-                    </div>
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${game.color}`}>
-                      <IconComponent className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="pt-0">
-                  <div className="space-y-4">
-                    {/* Attractive Game Cover */}
-                    <div className={`relative bg-gradient-to-br ${game.color} rounded-xl h-40 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300`}>
-                      <div className="absolute inset-0 opacity-10">
-                        <div className="absolute top-4 left-4 w-12 h-12 rounded-full bg-white animate-pulse"></div>
-                        <div className="absolute bottom-6 right-4 w-16 h-16 rounded-full bg-yellow-300 animate-ping"></div>
-                        <div className="absolute top-8 right-8 w-6 h-6 rounded-full bg-white animate-pulse"></div>
-                        <div className="absolute bottom-12 left-6 w-10 h-10 rounded-full bg-yellow-300 animate-ping"></div>
-                      </div>
-                      <div className="relative z-10 text-center">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 border-2 border-white/30 inline-block mb-2 hover:scale-110 transition-transform duration-300 group-hover:animate-bounce">
-                          <Star className="w-8 h-8 text-yellow-300 fill-current" />
-                        </div>
-                        <h3 className="text-white font-bold text-lg">{game.title}</h3>
-                        <p className="text-purple-100 text-sm">Klik untuk mulai bermain!</p>
-                      </div>
-                    </div>
-
-                    {/* Informasi tambahan game (hanya muncul di mode admin) */}
-                    {isAdmin && (
-                      <div className="text-xs text-gray-500 space-y-1">
-                        <p>Rating: {game.rating} | Dimainkan: {game.plays}x</p>
-                        <p>Kesulitan: {game.difficulty} | Usia: {game.age_group}</p>
-                        <p>Durasi: {game.duration} | Pemain: {game.players}</p>
-                      </div>
-                    )}
-
-                    <div className="flex gap-2">
-                      <Button 
-                        className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white group-hover:shadow-lg transition-all duration-300"
-                        onClick={() => openGameModal(game)}
-                      >
-                        <Play className="w-4 h-4 mr-2" />
-                        Mainkan
-                      </Button>
-                      
-                      {/* Tombol edit dan hapus (hanya muncul di mode admin) */}
-                      {isAdmin && (
-                        <>
-                          <Button 
-                            variant="outline"
-                            size="icon"
-                            onClick={() => openFormModal(game as unknown as DatabaseGame)}
-                            className="border-purple-300 text-purple-600 hover:bg-purple-50"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button 
-                            variant="outline"
-                            size="icon"
-                            onClick={async () => {
-                              if (window.confirm(`Apakah Anda yakin ingin menghapus game "${game.title}"?`)) {
-                                const result = await deleteGame(game.id);
-                                if (result.success) {
-                                  alert("Game berhasil dihapus");
-                                } else {
-                                  alert(`Gagal menghapus game: ${result.error}`);
-                                }
-                              }
-                            }}
-                            className="border-red-300 text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-4">
+          {filtered.map((game) => (
+            <div
+              key={game.id}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-3 flex flex-col items-center justify-between hover:scale-105"
+            >
+              <img
+                src={resizeThumb(game.thumbnail)}
+                alt={game.title}
+                className="w-full h-40 object-cover rounded-xl mb-3 border-2 border-indigo-100"
+                onError={(e) => (e.currentTarget.src = "/assets/default-thumbnail.png")}
+              />
+              <h3 className="text-center text-sm font-semibold text-indigo-700 mb-2">
+                {game.title}
+              </h3>
+              <button
+                onClick={() => window.open(`/game/play/${game.id}`, "_blank")}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white text-sm px-4 py-1 rounded-full transition"
+              >
+                Mainkan
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 
-      <GameModal game={selectedGame} onClose={closeGameModal} />
-      {showFormModal && (
-        <GameFormModal 
-          game={editingGame} 
-          onClose={closeFormModal} 
-          onSave={addGame}
-          onUpdate={updateGame}
-        />
-      )}
+      {/* Modal detail game */}
+      <GameModal game={selectedGame} onClose={() => setSelectedGame(null)} />
     </div>
   );
 }

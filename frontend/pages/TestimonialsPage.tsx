@@ -4,79 +4,27 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Quote, Heart, ThumbsUp, Users, Trophy } from "lucide-react";
 import { Mascot } from "../components/Mascot";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { logger } from "@/lib/logger";
 
 // Import mascot images
 import starKidsMascot from "../assets/Star Kids.png";
 import queenChildMascot from "../assets/Quen Child.png";
 
-const testimonials = [
-  {
-    id: 1,
-    name: "Ibu Sarah",
-    child: "Anya (8 tahun)",
-    program: "Sanggar Seni Digital",
-    rating: 5,
-    content: "Anya sekarang sangat excited buat belajar seni digital! Dia yang dulu cuma suka coret-coret di kertas, sekarang bisa bikin digital art yang amazing. Quen Chlid benar-benar jadi teman belajar yang menyenangkan untuk dia.",
-    achievement: "Juara 1 Lomba Seni Digital Anak",
-    date: "2 bulan yang lalu",
-    image: "/api/placeholder/60/60"
-  },
-  {
-    id: 2,
-    name: "Bapak Rudi",
-    child: "Budi (10 tahun)",
-    program: "Bimbel TerDig",
-    rating: 5,
-    content: "Matematika Budi naik drastis dari 65 ke 92! Metode belajar di TerDig Academy benar-benar efektif. Star Kids membuat belajar jadi fun, anak jadi tidak takut lagi sama pelajaran matematika.",
-    achievement: "Ranking 1 di kelas",
-    date: "1 bulan yang lalu", 
-    image: "/api/placeholder/60/60"
-  },
-  {
-    id: 3,
-    name: "Ibu Devi",
-    child: "Citra (16 tahun)",
-    program: "AI Art & Advanced",
-    rating: 5,
-    content: "Program AI Art di TerDig Academy luar biasa! Citra yang dulu hanya suka menggambar manual, sekarang mahir menggunakan AI untuk create artwork yang stunning. Dia bahkan sudah dapat job freelance!",
-    achievement: "Finalist Kompetisi AI Art Nasional",
-    date: "3 minggu yang lalu",
-    image: "/api/placeholder/60/60"
-  },
-  {
-    id: 4,
-    name: "Ibu Linda",
-    child: "Doni (12 tahun)",
-    program: "Bimbel TerDig SMP",
-    rating: 5,
-    content: "Doni sekarang sangat percaya diri dengan pelajaran IPA. Eksperimen-eksperimen yang diajarkan sangat menarik dan mudah dipahami. Gurunya juga sabar dan supportive banget.",
-    achievement: "Best Science Project",
-    date: "2 minggu yang lalu",
-    image: "/api/placeholder/60/60"
-  },
-  {
-    id: 5,
-    name: "Bapak Eko",
-    child: "Farah (14 tahun)",
-    program: "Desain Grafis SMP",
-    rating: 5,
-    content: "Farah sekarang bisa bikin poster dan logo sendiri! Skill desain grafinya berkembang pesat sejak ikut program di Sanggar Seni Digital. Quen Chlid memberikan inspirasi dan motivasi yang luar biasa.",
-    achievement: "Portfolio terbaik di kelasnya",
-    date: "1 minggu yang lalu",
-    image: "/api/placeholder/60/60"
-  },
-  {
-    id: 6,
-    name: "Ibu Ani",
-    child: "Gita (6 tahun)",
-    program: "TK/PAUD",
-    rating: 5,
-    content: "Gita jadi semangat banget belajar huruf dan angka! Metode pembelajaran yang fun dan interaktif membuat dia cepat bisa baca tulis. Star Kids jadi teman favoritnya sekarang.",
-    achievement: "Lulus TK dengan nilai terbaik",
-    date: "1 bulan yang lalu",
-    image: "/api/placeholder/60/60"
-  }
-];
+// Tipe data untuk testimonial dari database
+interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  child_info: string;
+  program: string;
+  rating: number;
+  content: string;
+  avatar_url: string;
+  achievement: string;
+  created_at: string;
+}
 
 const stats = [
   {
@@ -107,6 +55,63 @@ const stats = [
 
 export function TestimonialsPage() {
   const navigate = useNavigate();
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const { data, error } = await supabase
+          .from("testimonials")
+          .select("*")
+          .order("id", { ascending: true });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        setTestimonials(data || []);
+      } catch (err) {
+        logger.error("Error fetching testimonials:", err);
+        setError("Terjadi kesalahan saat memuat data testimoni");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen py-20 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Memuat data testimoni...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen py-20 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 font-semibold">{error}</p>
+          <Button 
+            className="mt-4"
+            onClick={() => window.location.reload()}
+          >
+            Coba Lagi
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen py-20 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50">
@@ -184,7 +189,7 @@ export function TestimonialsPage() {
                   <div>
                     <CardTitle className="text-lg font-bold">{testimonial.name}</CardTitle>
                     <CardDescription className="text-purple-600 font-medium">
-                      Orang tua {testimonial.child}
+                      {testimonial.role} - {testimonial.child_info}
                     </CardDescription>
                   </div>
                 </div>
@@ -194,7 +199,13 @@ export function TestimonialsPage() {
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   ))}
-                  <span className="text-sm text-gray-500 ml-2">{testimonial.date}</span>
+                  <span className="text-sm text-gray-500 ml-2">
+                    {new Date(testimonial.created_at).toLocaleDateString('id-ID', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </span>
                 </div>
               </CardHeader>
 
@@ -300,9 +311,9 @@ export function TestimonialsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 rounded-xl font-semibold"
-              onClick={() => navigate("/konsultasi-gratis")}
+              onClick={() => navigate("/daftar")}
             >
-              Konsultasi Gratis
+              Daftar Sekarang
             </Button>
             <Button 
               variant="outline" 

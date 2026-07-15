@@ -297,11 +297,11 @@ export function AboutPage() {
                   Jelajahi Program
                 </Button>
                 <Button 
-                  onClick={() => navigate("/konsultasi-gratis")}
+                  onClick={() => navigate("/konsultasi-ai")}
                   variant="outline" 
                   className="border-white text-white hover:bg-white/10 font-semibold px-8 py-3"
                 >
-                  Konsultasi Gratis
+                  Coba AI Tutor Gratis
                 </Button>
               </div>
             </CardContent>

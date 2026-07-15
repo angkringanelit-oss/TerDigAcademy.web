@@ -1,6 +1,7 @@
 import { X, Gamepad2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "../src/lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
+import { logger } from "@/lib/logger";
 
 // Tipe data untuk game yang akan ditampilkan di modal
 interface Game {
@@ -19,6 +20,9 @@ interface Game {
   rewards: string[];
   features: string[];
   game_url: string; // Tambahkan properti game_url
+  embed_url?: string; // Tambahkan properti embed_url
+  embed_height?: number; // Tambahkan properti embed_height
+  source?: string; // Optional field for game source
   component?: React.ComponentType; // Optional untuk kompatibilitas
 }
 
@@ -41,7 +45,7 @@ export function GameModal({ game, onClose }: GameModalProps) {
         .single();
 
       if (error) {
-        console.error("Gagal mendapatkan data plays:", error);
+        logger.error("Gagal mendapatkan data plays:", error);
         return;
       }
 
@@ -52,53 +56,16 @@ export function GameModal({ game, onClose }: GameModalProps) {
         .eq("id", gameId);
 
       if (updateError) {
-        console.error("Gagal update plays:", updateError);
+        logger.error("Gagal update plays:", updateError);
       }
     } catch (err) {
-      console.error("Error saat update plays:", err);
+      logger.error("Error saat update plays:", err);
     }
   };
 
-  // Menentukan komponen game berdasarkan kategori
-  const getGameComponent = () => {
-    // Untuk saat ini, kita akan menggunakan placeholder
-    // Anda bisa mengimplementasikan logika untuk memilih komponen game yang sesuai
-    return () => (
-      <div className="text-center py-8">
-        <h3 className="text-xl font-bold mb-4">{game.title}</h3>
-        <p className="text-gray-600 mb-6">{game.description}</p>
-        <div className="bg-gray-100 rounded-lg p-6 mb-6">
-          <p className="text-gray-500">Game component akan ditampilkan di sini</p>
-        </div>
-        <div className="grid grid-cols-2 gap-4 text-left">
-          <div>
-            <h4 className="font-semibold mb-2">Detail Game</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>Kategori: {game.category}</li>
-              <li>Kesulitan: {game.difficulty}</li>
-              <li>Usia: {game.age_group}</li>
-              <li>Pemain: {game.players}</li>
-              <li>Durasi: {game.duration}</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-2">Rewards</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              {game.rewards.map((reward, index) => (
-                <li key={index}>• {reward}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const GameComponent = getGameComponent();
-
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
           <div>
             <h2 className="text-xl font-bold text-gray-800">{game.title}</h2>
@@ -115,7 +82,52 @@ export function GameModal({ game, onClose }: GameModalProps) {
         </div>
         
         <div className="overflow-y-auto flex-1 p-4">
-          <GameComponent />
+          <div className="text-center py-4">
+            <h3 className="text-xl font-bold mb-2">{game.title}</h3>
+            <p className="text-gray-600 mb-4">{game.description}</p>
+            
+            {/* Tambahkan iframe Wordwall jika embed_url tersedia */}
+            {game.embed_url && (
+              <div className="w-full mt-4 flex justify-center">
+                <iframe
+                  src={game.embed_url}
+                  width="100%"
+                  height={game.embed_height || 400}
+                  frameBorder="0"
+                  allowFullScreen
+                  className="rounded-xl shadow-lg border border-gray-200"
+                  title={game.title}
+                ></iframe>
+              </div>
+            )}
+            
+            {!game.embed_url && (
+              <div className="bg-gray-100 rounded-lg p-6 mb-6">
+                <p className="text-gray-500">Game component akan ditampilkan di sini</p>
+              </div>
+            )}
+            
+            <div className="grid grid-cols-2 gap-4 text-left mt-6">
+              <div>
+                <h4 className="font-semibold mb-2">Detail Game</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>Kategori: {game.category}</li>
+                  <li>Kesulitan: {game.difficulty}</li>
+                  <li>Usia: {game.age_group}</li>
+                  <li>Pemain: {game.players}</li>
+                  <li>Durasi: {game.duration}</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Rewards</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  {game.rewards.map((reward, index) => (
+                    <li key={index}>• {reward}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div className="p-4 border-t bg-gray-50 flex justify-between">

@@ -1,27 +1,32 @@
 import { Helmet } from "react-helmet-async";
 import { HeroSection } from "../components/HeroSection";
+import { KeunggulanSection } from "../components/KeunggulanSection";
 import { ProgramSection } from "../components/ProgramSection";
-import { EducationalFeaturesSection } from "../components/EducationalFeaturesSection";
 import { TestimonialsSection } from "../components/TestimonialsSection";
+import { ProgramUnggulanAiSection } from "../components/ProgramUnggulanAiSection";
 import { FinalCTASection } from "../components/FinalCTASection";
-import { ProductsSection } from "../components/ProductsSection";
-import { showProducts } from "../lib/featureFlags";
 
 export function HomePage() {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>TerDig Academy - Belajar & Berkarya Digital</title>
+        <title>TerDig Academy - Bimbel Akademik Modern dengan AI</title>
         <meta
           name="description"
-          content="Platform pendidikan digital untuk anak - bimbel akademik & sanggar seni digital."
+          content="Bimbel Akademik Modern untuk SD dengan pendampingan AI Tutor pribadi 24/7. Tutor profesional, laporan progress via WhatsApp, trial gratis 7 hari."
         />
       </Helmet>
+      {/* 1. ATTENTION */}
       <HeroSection />
-      {showProducts && <ProductsSection />}
+      {/* 2. INTEREST */}
+      <KeunggulanSection />
+      {/* 3. DESIRE — Program Reguler */}
       <ProgramSection />
-      <EducationalFeaturesSection />
+      {/* 4. DESIRE — Social Proof */}
       <TestimonialsSection />
+      {/* 5. DESIRE — Program Unggulan AI */}
+      <ProgramUnggulanAiSection />
+      {/* 6. ACTION */}
       <FinalCTASection />
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { logger } from "@/lib/logger";
 
 interface RegistrationFormProps {
   isOpen: boolean;
@@ -49,12 +50,12 @@ export function RegistrationForm({ isOpen, onClose, selectedProgram }: Registrat
       ]);
 
       if (error) {
-        console.error("Error saving registration:", error.message);
+        logger.error("Error saving registration:", error.message);
         setError("Pendaftaran gagal, silakan coba lagi.");
         return;
       }
 
-      console.log("Registration saved:", data);
+      logger.success("Registration saved:", data);
 
       // Kirim notifikasi Telegram via Edge Function
       const { data: notifRes, error: notifErr } = await supabase.functions.invoke(
@@ -73,9 +74,9 @@ Program: ${formData.program}`,
       );
 
       if (notifErr) {
-        console.error("Telegram error:", notifErr.message);
+        logger.error("Telegram error:", notifErr.message);
       } else {
-        console.log("Telegram sent:", notifRes);
+        logger.info("Telegram sent:", notifRes);
       }
 
       // Tampilkan sukses dulu, lalu reset form & auto-close
@@ -93,7 +94,7 @@ Program: ${formData.program}`,
         });
       }, 2500);
     } catch (err) {
-      console.error("Error during registration:", err);
+      logger.error("Error during registration:", err);
       setError("Terjadi kesalahan, silakan coba lagi.");
     }
   };

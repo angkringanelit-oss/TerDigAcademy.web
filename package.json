@@ -1,17 +1,20 @@
 {
-  "name": "leap-app",
+  "name": "terdig-academy",
   "version": "1.0.0",
   "type": "module",
   "packageManager": "bun",
   "workspaces": [
-    "backend",
     "frontend"
   ],
   "scripts": {
     "dev": "bun run --workspace frontend dev",
-    "backend-dev": "bun run --workspace backend dev",
     "frontend-dev": "bun run --workspace frontend dev",
     "install-all": "bun install",
-    "start": "bun run --workspace frontend dev"
+    "start": "bun run --workspace frontend dev",
+    "deploy-functions": "cd supabase && supabase functions deploy notify-telegram --no-verify-jwt"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "supabase": "^2.48.3"
   }
 }

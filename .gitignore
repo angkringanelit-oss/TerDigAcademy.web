@@ -4,3 +4,26 @@ encore.gen.cue
 /.encore
 node_modules
 /encore.gen
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Build outputs
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+nul

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
@@ -7,14 +7,10 @@ import { ProgramPage } from "./pages/ProgramPage";
 import { AboutPage } from "./pages/AboutPage";
 import { GalleryPage } from "./pages/GalleryPage";
 import { TestimonialsPage } from "./pages/TestimonialsPage";
-
-import { KonsultasiGratisPage } from "./pages/KonsultasiGratisPage";
-import { VideoEducationPage } from "./pages/VideoEducationPage";
-import { EducationalGamesPage } from "./pages/EducationalGamesPage";
-import { PaketLengkapPage } from "./pages/PaketLengkapPage";
-import { CobaGratisPage } from "./pages/CobaGratisPage";
-import { DemoPage } from "./pages/DemoPage";
 import { AIConsultationPage } from "./pages/AIConsultationPage";
+import { ArticlesPage } from "./pages/ArticlesPage";
+import { ArticleDetailPage } from "./pages/ArticleDetailPage";
+import { DaftarPage } from "./pages/DaftarPage";
 
 function App() {
   return (
@@ -29,13 +25,11 @@ function App() {
               <Route path="/tentang" element={<AboutPage />} />
               <Route path="/galeri" element={<GalleryPage />} />
               <Route path="/testimoni" element={<TestimonialsPage />} />
-              <Route path="/konsultasi-gratis" element={<KonsultasiGratisPage />} />
-              <Route path="/video-edukasi" element={<VideoEducationPage />} />
-              <Route path="/game-edukatif" element={<EducationalGamesPage />} />
-              <Route path="/paket-lengkap" element={<PaketLengkapPage />} />
-              <Route path="/coba-gratis" element={<CobaGratisPage />} />
-              <Route path="/demo" element={<DemoPage />} />
               <Route path="/konsultasi-ai" element={<AIConsultationPage />} />
+              <Route path="/artikel" element={<ArticlesPage />} />
+              <Route path="/artikel/:slug" element={<ArticleDetailPage />} />
+              <Route path="/daftar" element={<DaftarPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
           <Footer />

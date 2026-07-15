@@ -3,7 +3,7 @@ import { X, Save, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "../src/lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 
 interface GameFormData {
   title: string;

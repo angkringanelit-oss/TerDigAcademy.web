@@ -147,11 +147,11 @@ export function SuccessModal({ isOpen, onClose, type, data }: SuccessModalProps)
                 Butuh bantuan? Hubungi kami:
               </p>
               <div className="flex justify-center gap-4 text-sm">
-                <a href="tel:+622112345678" className="text-blue-600 hover:underline flex items-center gap-1">
+                <a href="https://wa.me/62895339329650" className="text-blue-600 hover:underline flex items-center gap-1">
                   <Phone className="w-3 h-3" />
                   (021) 1234-5678
                 </a>
-                <a href="https://wa.me/6281234567890" className="text-green-600 hover:underline">
+                <a href="https://wa.me/62895339329650" className="text-green-600 hover:underline">
                   WhatsApp
                 </a>
               </div>

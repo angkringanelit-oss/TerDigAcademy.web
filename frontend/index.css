@@ -4,6 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html { scroll-behavior: smooth; }
+
 /* Responsive breakpoints: 
    sm: 640px and up (mobile landscape)
    md: 768px and up (tablet)
@@ -197,10 +199,19 @@
     @apply gap-4 sm:gap-6 md:gap-8;
   }
   
-  /* Scrollable navigation menu */
+  /* Hidden elements */
+  .responsive-grid-1-2-3.responsive-gap.max-w-7xl.mx-auto {
+    display: none !important;
+  }
+  
+  .text-center.mb-12.sm\:mb-16 {
+    display: none !important;
+  }
+  
+  /* Removed scroll functionality */
   .space-y-3.sm\:space-y-4 {
-    max-height: 70vh;
-    overflow-y: auto;
+    /* max-height: 70vh; */
+    /* overflow-y: auto; */
   }
 }
 

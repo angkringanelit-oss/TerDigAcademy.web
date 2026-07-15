@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Send, Bot, User, Sparkles, Brain, MessageCircle, ArrowLeft } from "lucide-react";
 import { Mascot } from "../components/Mascot";
 import { useNavigate } from "react-router-dom";
+import { logger } from "@/lib/logger";
+
+// Import mascot image
+import quenChildImg from "../assets/Quen Child.png";
 
 interface Message {
   id: string;
@@ -13,16 +17,6 @@ interface Message {
   sender: "user" | "ai";
   timestamp: Date;
 }
-
-const aiResponses = [
-  "Halo! Saya Quen, asisten AI TerDig yang siap membantu anak belajar dengan cara yang menyenangkan! Apa yang ingin dipelajari hari ini?",
-  "Pertanyaan yang bagus! Mari kita belajar bersama dengan cara yang mudah dan menyenangkan...",
-  "Wah, anak yang pintar! Saya akan jelaskan dengan gambar dan cerita yang seru. Apakah ada yang ingin ditanyakan lagi?",
-  "Bagus sekali! Anak sudah memahami konsep dasarnya. Sekarang mari kita coba latihan yang lebih seru!",
-  "Excellent! Anak hebat sekali! Sekarang mari kita lanjut ke materi yang lebih menarik.",
-  "Jangan khawatir kalau masih bingung, itu wajar kok! Mari kita coba cara lain yang lebih mudah...",
-  "Wah, pertanyaan yang cerdas! Ini menunjukkan anak sudah berpikir dengan baik. Mari kita explore lebih dalam...",
-];
 
 export function AIConsultationPage() {
   const navigate = useNavigate();
@@ -36,41 +30,91 @@ export function AIConsultationPage() {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
+  // Focus on input when component mounts
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    inputRef.current?.focus();
+  }, []);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    const userMessage: Message = {
+    const userMessage = inputValue.trim();
+
+    // Reset error sebelum request baru
+    setErrorMessage(null);
+
+    // Add user message
+    const newUserMessage: Message = {
       id: Date.now().toString(),
-      content: inputValue,
+      content: userMessage,
       sender: "user",
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => [...prev, newUserMessage]);
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const aiMessage: Message = {
+    try {
+      const proxyUrl = import.meta.env.VITE_GROQ_PROXY_URL;
+      
+      if (!proxyUrl) {
+        throw new Error("URL proxy AI tidak ditemukan. Silakan periksa konfigurasi environment.");
+      }
+
+      logger.info("Sending message to AI proxy:", proxyUrl);
+      
+      const response = await fetch(proxyUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "user", content: userMessage }
+          ]
+        }),
+      });
+
+      const data = await response.json();
+
+      // Handle rate limit (429)
+      if (response.status === 429) {
+        setErrorMessage(`⏰ ${data.message} (Coba lagi dalam ${data.retryAfter})`);
+        return;
+      }
+
+      // Handle AI unavailable / server error (503 or other)
+      if (response.status === 503 || !response.ok) {
+        setErrorMessage(`🤖 ${data.message || 'Terjadi kesalahan pada server AI.'}`);
+        return;
+      }
+
+      const aiMessage = data.response || "Aku belum tahu jawabannya, tapi aku akan belajar lagi!";
+
+      logger.success("AI response received");
+      
+      // Add AI response
+      const newAiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: aiResponses[Math.floor(Math.random() * aiResponses.length)],
+        content: aiMessage,
         sender: "ai",
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiMessage]);
+      
+      setMessages(prev => [...prev, newAiMessage]);
+    } catch (error) {
+      logger.error("Error getting AI response:", error);
+      
+      setErrorMessage(`🤖 Terjadi kesalahan pada server AI.`);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+      // Refocus on input after sending message
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -127,7 +171,7 @@ export function AIConsultationPage() {
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <Mascot 
-                  src="/images/quen-child-mascot.png"
+                  src={quenChildImg}
                   alt="Quen Child - AI Tutor"
                   size="lg"
                   animation="breathing"
@@ -166,6 +210,24 @@ export function AIConsultationPage() {
                 </div>
               </CardHeader>
 
+              {/* Error Banner */}
+              {errorMessage && (
+                <div className="px-4 pt-4">
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 animate-in fade-in slide-in-from-top-2">
+                    <p className="text-amber-800 text-sm mb-3 font-medium">{errorMessage}</p>
+                    <a
+                      href="https://wa.me/628953395950?text=Halo%20Admin%20TerDig,%20saya%20butuh%20bantuan%20tentang%20bimbel%20atau%20AI%20Tutor"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors shadow-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                      Chat Admin via WhatsApp
+                    </a>
+                  </div>
+                </div>
+              )}
+
               {/* Messages */}
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((message) => (
@@ -180,7 +242,7 @@ export function AIConsultationPage() {
                     )}
                     
                     <div
-                      className={`max-w-[80%] p-3 rounded-2xl ${
+                      className={`max-w-[80%] p-3 rounded-2xl whitespace-pre-line ${
                         message.sender === "user"
                           ? "bg-blue-600 text-white"
                           : "bg-gray-100 text-gray-900"
@@ -217,13 +279,13 @@ export function AIConsultationPage() {
                     </div>
                   </div>
                 )}
-                <div ref={messagesEndRef} />
               </CardContent>
 
               {/* Input */}
               <div className="border-t p-4">
                 <div className="flex gap-3">
                   <Input
+                    ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}

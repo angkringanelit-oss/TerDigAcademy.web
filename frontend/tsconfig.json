@@ -22,12 +22,7 @@
       "@/*": [
         "./*"
       ],
-      "~backend/*": [
-        "../backend/*"
-      ],
-      "~backend/client": [
-        "./client.ts"
-      ]
+
     }
   },
   "include": [

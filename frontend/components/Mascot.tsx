@@ -15,6 +15,7 @@ export function Mascot({
   animation = "float", 
   size = "md" 
 }: MascotProps) {
+  
   const sizeClasses = {
     xs: "w-16 h-16 sm:w-20 sm:h-20",
     sm: "w-24 h-24 sm:w-32 sm:h-32",
@@ -44,6 +45,9 @@ export function Mascot({
         alt={alt}
         className="w-full h-full object-contain drop-shadow-lg sm:drop-shadow-xl md:drop-shadow-2xl transition-all duration-300"
         loading="lazy"
+        onError={(e) => {
+          console.error("Error loading mascot image:", src, e);
+        }}
       />
     </div>
   );

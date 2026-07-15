@@ -10,6 +10,7 @@ import { SuccessModal } from "../components/SuccessModal";
 import { useRegistration } from "../hooks/useRegistration";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { logger } from "@/lib/logger";
 
 const freeFeatures = [
   {
@@ -106,7 +107,7 @@ export function CobaGratisPage() {
         description: response.message,
       });
     } catch (error: any) {
-      console.error("Registration error:", error);
+      logger.error("Registration error:", error);
       toast({
         title: "Pendaftaran Gagal",
         description: error.message || "Terjadi kesalahan saat mendaftar. Silakan coba lagi.",

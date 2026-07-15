@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,11 +11,13 @@ import { SuccessModal } from "../components/SuccessModal";
 import { useRegistration } from "../hooks/useRegistration";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { logger } from "@/lib/logger";
 
 // Import mascot images
 import starKidsImg from "../assets/Star Kids.png";
 import quenChlidImg from "../assets/Quen Child.png";
 
+// Define consultation types
 const consultationTypes = [
   {
     id: "development",
@@ -39,6 +41,9 @@ const consultationTypes = [
     duration: "45 menit"
   }
 ];
+
+// Log consultation types for debugging
+logger.debug("Consultation types defined:", consultationTypes);
 
 const timeSlots = [
   "09:00 - 09:30",
@@ -93,6 +98,8 @@ export function KonsultasiGratisPage() {
   const { toast } = useToast();
   const { registerConsultation, isLoading } = useRegistration();
   
+  logger.debug("useRegistration hook:", { registerConsultation, isLoading });
+  
   const [formData, setFormData] = useState({
     parentName: "",
     childName: "",
@@ -106,27 +113,224 @@ export function KonsultasiGratisPage() {
     topics: "",
     agreeTerms: false
   });
+  
+  // Log initial form data
+  useEffect(() => {
+    logger.debug("Initial form data:", formData);
+    logger.debug("ConsultationTypes available:", consultationTypes);
+  }, []);
+
+  logger.debug("Current form data:", formData);
+  logger.debug("Is loading:", isLoading);
+  
+  // Log when component mounts
+  useEffect(() => {
+    logger.info("KonsultasiGratisPage component mounted");
+  }, []);
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successData, setSuccessData] = useState<any>(null);
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    logger.debug("handleInputChange called:", { field, value });
+    logger.debug("Previous form data:", formData);
+    
+    // Special check for consultationType
+    if (field === "consultationType") {
+      logger.debug("Special handling for consultationType");
+      logger.debug("Value being set:", value);
+      logger.debug("Type of value:", typeof value);
+      
+      // Check if value is valid
+      if (value && typeof value === 'string' && value.length > 0) {
+        logger.debug("consultationType value is valid");
+      } else {
+        logger.debug("consultationType value is invalid");
+        logger.debug("Value:", value);
+        logger.debug("Type:", typeof value);
+        if (value === null) logger.debug("Value is null");
+        if (value === undefined) logger.debug("Value is undefined");
+        if (value === '') logger.debug("Value is empty string");
+      }
+      
+      // Additional validation
+      logger.debug("ConsultationTypes array for validation:", consultationTypes);
+      const isValidType = consultationTypes.some(type => type.id === value);
+      logger.debug("Is valid consultation type:", isValidType);
+      if (!isValidType) {
+        logger.debug("Invalid consultation type selected");
+      }
+    }
+    
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      logger.debug("New form data:", newData);
+      
+      // Special handling for consultationType to ensure it's being set correctly
+      if (field === "consultationType") {
+        logger.debug("Special handling for consultationType:", value);
+        logger.debug("Type of value:", typeof value);
+      }
+      
+      return newData;
+    });
+    logger.debug("Form data after setFormData call:", formData); // This will show the old value due to React's async nature
+    
+    // Additional logging after state update
+    setTimeout(() => {
+      if (field === "consultationType") {
+        logger.debug("ConsultationType after state update:", formData.consultationType);
+      }
+    }, 0);
   };
+
+  // Calculate isFormValid inside useEffect to ensure it updates properly
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    // Special logging for consultationType to understand why it might be failing validation
+    logger.debug("ConsultationType value:", formData.consultationType);
+    logger.debug("ConsultationType trimmed:", formData.consultationType.trim());
+    logger.debug("Is consultationType valid:", formData.consultationType.trim() !== '');
+    
+    // Additional detailed check for consultationType
+    if (formData.consultationType) {
+      logger.debug("ConsultationType exists:", true);
+      logger.debug("ConsultationType length:", formData.consultationType.length);
+      logger.debug("ConsultationType type:", typeof formData.consultationType);
+    } else {
+      logger.debug("ConsultationType exists:", false);
+    }
+    
+    // Check if consultationType has changed from previous render
+    logger.debug("Checking consultationType change");
+    
+    const validationResults = {
+      parentName: formData.parentName.trim() !== '',
+      childName: formData.childName.trim() !== '',
+      email: formData.email.trim() !== '',
+      phone: formData.phone.trim() !== '',
+      consultationType: formData.consultationType.trim() !== '',
+      preferredDate: formData.preferredDate.trim() !== '',
+      preferredTime: formData.preferredTime.trim() !== '',
+      agreeTerms: formData.agreeTerms === true
+    };
+    
+    const isValid = Object.values(validationResults).every(Boolean);
+    
+    setIsFormValid(isValid);
+    
+    logger.debug("Form field values:", {
+      parentName: formData.parentName,
+      childName: formData.childName,
+      email: formData.email,
+      phone: formData.phone,
+      consultationType: formData.consultationType,
+      preferredDate: formData.preferredDate,
+      preferredTime: formData.preferredTime,
+      agreeTerms: formData.agreeTerms
+    });
+    
+    logger.debug("Form validation:", validationResults);
+    logger.debug("Overall form valid:", isValid);
+    
+    // Log button state
+    logger.debug("Button state - isFormValid:", isValid, "isLoading:", isLoading, "disabled:", !isValid || isLoading);
+    
+    // Log which fields are invalid
+    if (!isValid) {
+      const invalidFields = Object.entries(validationResults)
+        .filter(([key, value]) => !value)
+        .map(([key]) => key);
+      logger.debug("Invalid fields:", invalidFields);
+      
+      // Special check for consultationType
+      if (!validationResults.consultationType) {
+        logger.debug("ConsultationType specific check - value:", formData.consultationType, "type:", typeof formData.consultationType);
+      }
+    } else {
+      logger.debug("All fields are valid, button should be enabled");
+    }
+    
+    // Additional check for consultationType specifically
+    if (formData.consultationType && formData.consultationType.trim() !== '') {
+      logger.debug("ConsultationType is set and not empty");
+    } else {
+      logger.debug("ConsultationType is empty or not set");
+      
+      // Additional detailed logging for consultationType
+      logger.debug("Detailed consultationType check:");
+      logger.debug("- Value:", formData.consultationType);
+      logger.debug("- Type:", typeof formData.consultationType);
+      logger.debug("- Length:", formData.consultationType ? formData.consultationType.length : 'undefined');
+      if (formData.consultationType) {
+        logger.debug("- Is string:", typeof formData.consultationType === 'string');
+        logger.debug("- Trimmed length:", formData.consultationType.trim().length);
+      }
+    }
+    
+    // Additional debug logging
+    logger.debug("ConsultationTypes array:", consultationTypes);
+    logger.debug("Current consultationType in formData:", formData.consultationType);
+    
+    // Check if the selected consultationType exists in the consultationTypes array
+    if (formData.consultationType) {
+      const selectedType = consultationTypes.find(type => type.id === formData.consultationType);
+      if (selectedType) {
+        logger.debug("Selected consultation type found in array:", selectedType);
+      } else {
+        logger.debug("Selected consultation type NOT found in array");
+        logger.debug("Available types:", consultationTypes.map(t => t.id));
+      }
+    }
+  }, [formData, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isFormValid) {
-      toast({
-        title: "Form Tidak Lengkap",
-        description: "Mohon lengkapi semua field yang wajib diisi",
-        variant: "destructive"
-      });
-      return;
-    }
-
+    logger.info("Form submit handler called");
+    logger.debug("Form data:", formData);
+    logger.debug("Is form valid:", isFormValid);
+    logger.debug("Register consultation function:", registerConsultation);
+    
+    // Log individual form field values
+    logger.debug("Form field values:", {
+      parentName: formData.parentName,
+      childName: formData.childName,
+      email: formData.email,
+      phone: formData.phone,
+      consultationType: formData.consultationType,
+      preferredDate: formData.preferredDate,
+      preferredTime: formData.preferredTime,
+      agreeTerms: formData.agreeTerms
+    });
+    
+    // Tambahkan try-catch untuk menangkap error yang mungkin terjadi
     try {
+      if (!isFormValid) {
+        toast({
+          title: "Form Tidak Lengkap",
+          description: "Mohon lengkapi semua field yang wajib diisi",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Tambahkan logging sebelum memanggil registerConsultation
+      logger.debug("Calling registerConsultation with data:", {
+        parentName: formData.parentName,
+        childName: formData.childName,
+        email: formData.email,
+        phone: formData.phone,
+        childAge: formData.childAge || undefined,
+        grade: formData.grade || undefined,
+        consultationType: formData.consultationType,
+        preferredDate: formData.preferredDate,
+        preferredTime: formData.preferredTime,
+        topics: formData.topics || undefined
+      });
+
+      logger.debug("Calling registerConsultation");
       const response = await registerConsultation({
         parentName: formData.parentName,
         childName: formData.childName,
@@ -140,30 +344,42 @@ export function KonsultasiGratisPage() {
         topics: formData.topics || undefined
       });
 
-      setSuccessData(response);
-      setShowSuccessModal(true);
+      logger.debug("Registration response:", response);
       
-      // Reset form
-      setFormData({
-        parentName: "",
-        childName: "",
-        email: "",
-        phone: "",
-        childAge: "",
-        grade: "",
-        consultationType: "",
-        preferredDate: "",
-        preferredTime: "",
-        topics: "",
-        agreeTerms: false
-      });
+      if (response && response.success) {
+        logger.success("Registration successful");
+        setSuccessData(response);
+        setShowSuccessModal(true);
+        
+        // Reset form
+        setFormData({
+          parentName: "",
+          childName: "",
+          email: "",
+          phone: "",
+          childAge: "",
+          grade: "",
+          consultationType: "",
+          preferredDate: "",
+          preferredTime: "",
+          topics: "",
+          agreeTerms: false
+        });
 
-      toast({
-        title: "Konsultasi Berhasil Dijadwalkan!",
-        description: response.message,
-      });
+        toast({
+          title: "Konsultasi Berhasil Dijadwalkan!",
+          description: response.message,
+        });
+      } else {
+        logger.debug("Registration failed without error");
+        toast({
+          title: "Pendaftaran Gagal",
+          description: response?.message || "Terjadi kesalahan saat mendaftar konsultasi. Silakan coba lagi.",
+          variant: "destructive"
+        });
+      }
     } catch (error: any) {
-      console.error("Consultation registration error:", error);
+      logger.error("Caught error in handleSubmit:", error);
       toast({
         title: "Pendaftaran Gagal",
         description: error.message || "Terjadi kesalahan saat mendaftar konsultasi. Silakan coba lagi.",
@@ -171,10 +387,6 @@ export function KonsultasiGratisPage() {
       });
     }
   };
-
-  const isFormValid = formData.parentName && formData.childName && formData.email && formData.phone && 
-                     formData.consultationType && formData.preferredDate && 
-                     formData.preferredTime && formData.agreeTerms;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
@@ -242,7 +454,28 @@ export function KonsultasiGratisPage() {
                           ? 'ring-2 ring-green-500 bg-green-50' 
                           : 'hover:border-green-300'
                       }`}
-                      onClick={() => handleInputChange("consultationType", type.id)}
+                      onClick={() => {
+                        logger.debug("Consultation type selected:", type.id);
+                        logger.debug("Current formData before update:", formData);
+                        logger.debug("Setting consultationType to:", type.id);
+                        
+                        // Additional check to ensure the value is being passed correctly
+                        if (type.id) {
+                          logger.debug("Type ID exists and is not empty");
+                        } else {
+                          logger.debug("Type ID is empty or undefined");
+                        }
+                        
+                        // Log the consultation type object
+                        logger.debug("Consultation type object:", type);
+                        
+                        handleInputChange("consultationType", type.id);
+                        // Log the updated form data after a short delay to see the change
+                        setTimeout(() => {
+                          logger.debug("FormData after setting consultationType:", formData);
+                          logger.debug("ConsultationType in formData:", formData.consultationType);
+                        }, 0);
+                      }}
                     >
                       <CardContent className="p-6 text-center">
                         <IconComponent className="w-12 h-12 text-green-600 mx-auto mb-4" />
@@ -257,6 +490,12 @@ export function KonsultasiGratisPage() {
                   );
                 })}
               </div>
+              {/* Debug information for consultationType */}
+              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <strong>Debug Info:</strong> Selected consultation type: {formData.consultationType || 'None'}
+                </p>
+              </div>
             </div>
 
             {/* Registration Form */}
@@ -268,7 +507,14 @@ export function KonsultasiGratisPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form 
+                  onSubmit={(e) => {
+                    logger.debug("Form submit event triggered");
+                    logger.debug("Event object:", e);
+                    handleSubmit(e);
+                  }} 
+                  className="space-y-6"
+                >
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -276,7 +522,11 @@ export function KonsultasiGratisPage() {
                       </label>
                       <Input
                         value={formData.parentName}
-                        onChange={(e) => handleInputChange("parentName", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Parent name changed:", e.target.value);
+                          logger.debug("Setting parentName to:", e.target.value);
+                          handleInputChange("parentName", e.target.value);
+                        }}
                         placeholder="Masukkan nama orang tua"
                         required
                         disabled={isLoading}
@@ -288,7 +538,11 @@ export function KonsultasiGratisPage() {
                       </label>
                       <Input
                         value={formData.childName}
-                        onChange={(e) => handleInputChange("childName", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Child name changed:", e.target.value);
+                          logger.debug("Setting childName to:", e.target.value);
+                          handleInputChange("childName", e.target.value);
+                        }}
                         placeholder="Masukkan nama anak"
                         required
                         disabled={isLoading}
@@ -304,7 +558,11 @@ export function KonsultasiGratisPage() {
                       <Input
                         type="email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange("email", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Email changed:", e.target.value);
+                          logger.debug("Setting email to:", e.target.value);
+                          handleInputChange("email", e.target.value);
+                        }}
                         placeholder="nama@email.com"
                         required
                         disabled={isLoading}
@@ -317,7 +575,11 @@ export function KonsultasiGratisPage() {
                       <Input
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => handleInputChange("phone", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Phone changed:", e.target.value);
+                          logger.debug("Setting phone to:", e.target.value);
+                          handleInputChange("phone", e.target.value);
+                        }}
                         placeholder="08xxxxxxxxxx"
                         required
                         disabled={isLoading}
@@ -332,7 +594,11 @@ export function KonsultasiGratisPage() {
                       </label>
                       <select 
                         value={formData.childAge}
-                        onChange={(e) => handleInputChange("childAge", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Child age selected:", e.target.value);
+                          logger.debug("Setting childAge to:", e.target.value);
+                          handleInputChange("childAge", e.target.value);
+                        }}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:border-green-500 focus:outline-none disabled:opacity-50"
                         disabled={isLoading}
                       >
@@ -355,7 +621,11 @@ export function KonsultasiGratisPage() {
                       </label>
                       <select 
                         value={formData.grade}
-                        onChange={(e) => handleInputChange("grade", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Grade selected:", e.target.value);
+                          logger.debug("Setting grade to:", e.target.value);
+                          handleInputChange("grade", e.target.value);
+                        }}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:border-green-500 focus:outline-none disabled:opacity-50"
                         disabled={isLoading}
                       >
@@ -382,7 +652,11 @@ export function KonsultasiGratisPage() {
                       <Input
                         type="date"
                         value={formData.preferredDate}
-                        onChange={(e) => handleInputChange("preferredDate", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Date selected:", e.target.value);
+                          logger.debug("Setting preferredDate to:", e.target.value);
+                          handleInputChange("preferredDate", e.target.value);
+                        }}
                         min={new Date().toISOString().split('T')[0]}
                         required
                         disabled={isLoading}
@@ -394,7 +668,11 @@ export function KonsultasiGratisPage() {
                       </label>
                       <select 
                         value={formData.preferredTime}
-                        onChange={(e) => handleInputChange("preferredTime", e.target.value)}
+                        onChange={(e) => {
+                          logger.debug("Time selected:", e.target.value);
+                          logger.debug("Setting preferredTime to:", e.target.value);
+                          handleInputChange("preferredTime", e.target.value);
+                        }}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:border-green-500 focus:outline-none disabled:opacity-50"
                         required
                         disabled={isLoading}
@@ -413,7 +691,11 @@ export function KonsultasiGratisPage() {
                     </label>
                     <Textarea
                       value={formData.topics}
-                      onChange={(e) => handleInputChange("topics", e.target.value)}
+                      onChange={(e) => {
+                        logger.debug("Topics changed:", e.target.value);
+                        logger.debug("Setting topics to:", e.target.value);
+                        handleInputChange("topics", e.target.value);
+                      }}
                       placeholder="Ceritakan hal-hal yang ingin Anda konsultasikan tentang anak..."
                       rows={4}
                       disabled={isLoading}
@@ -424,7 +706,14 @@ export function KonsultasiGratisPage() {
                     <Checkbox
                       id="terms"
                       checked={formData.agreeTerms}
-                      onCheckedChange={(checked) => handleInputChange("agreeTerms", checked as boolean)}
+                      onCheckedChange={(checked) => {
+                        logger.debug("Checkbox changed:", checked);
+                        logger.debug("Checkbox type:", typeof checked);
+                        // The Radix UI Checkbox returns 'true' when checked, 'false' when unchecked
+                        const booleanValue = checked === true;
+                        logger.debug("Setting agreeTerms to:", booleanValue);
+                        handleInputChange("agreeTerms", booleanValue);
+                      }}
                       disabled={isLoading}
                     />
                     <label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
@@ -453,6 +742,13 @@ export function KonsultasiGratisPage() {
                       </>
                     )}
                   </Button>
+                  
+                  {/* Informasi tambahan setelah tombol */}
+                  <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">
+                      Apabila Konsultasi lambat merespon, Hubungi Kami melalui Whatsapp Admin akan segera Kami tanggapi.
+                    </p>
+                  </div>
                 </form>
               </CardContent>
             </Card>

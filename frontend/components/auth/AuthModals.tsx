@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
 
 interface AuthModalsProps {
   isOpen: boolean;
@@ -45,7 +46,7 @@ export function AuthModals({ isOpen, onClose, defaultTab = "login" }: AuthModals
     setIsLoggingIn(true);
     try {
       // TODO: ganti dengan API call setelah backend ready
-      console.log("Login data:", loginData);
+      logger.debug("Login data:", loginData);
       toast({ title: "Login berhasil (dummy)" });
       onClose(); // tutup modal
     } catch (err: any) {
@@ -76,7 +77,7 @@ export function AuthModals({ isOpen, onClose, defaultTab = "login" }: AuthModals
     setIsRegistering(true);
     try {
       // TODO: ganti dengan API call setelah backend ready
-      console.log("Register data:", registerData);
+      logger.debug("Register data:", registerData);
       toast({ title: "Registrasi berhasil (dummy)" });
       onClose(); // tutup modal
     } catch (err: any) {
@@ -120,7 +121,8 @@ export function AuthModals({ isOpen, onClose, defaultTab = "login" }: AuthModals
               <TabsTrigger value="register">Daftar</TabsTrigger>
             </TabsList>
 
-            {/* ---------- LOGIN TAB ---------- */}
+            {/* ---------- LOGIN TAB ---------- */
+}
             <TabsContent value="login" className="space-y-4 mt-6">
               <form onSubmit={handleLoginSubmit} className="space-y-4">
                 {/* Email */}
@@ -193,7 +195,8 @@ export function AuthModals({ isOpen, onClose, defaultTab = "login" }: AuthModals
               </div>
             </TabsContent>
 
-            {/* ---------- REGISTER TAB ---------- */}
+            {/* ---------- REGISTER TAB ---------- */
+}
             <TabsContent value="register" className="space-y-4 mt-6">
               <form onSubmit={handleRegisterSubmit} className="space-y-4">
                 {/* Nama */}

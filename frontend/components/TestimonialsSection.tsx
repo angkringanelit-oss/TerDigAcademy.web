@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Quote } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
+import { logger } from "@/lib/logger";
 
 interface Testimonial {
   id: number;
@@ -27,17 +28,22 @@ export function TestimonialsSection() {
         setLoading(true);
         setError(null);
         
+        // Tambahkan logging untuk debug
+        logger.info("Fetching testimonials from Supabase...");
+        
         const { data, error } = await supabase
           .from("testimonials")
-          .select("*");
+          .select("*")
+          .order("id", { ascending: true });
 
         if (error) {
           throw new Error(error.message);
         }
 
+        logger.success("Testimonials fetched successfully:", data?.length);
         setTestimonials(data || []);
       } catch (err) {
-        console.error("Error fetching testimonials:", err);
+        logger.error("Error fetching testimonials:", err);
         setError("Terjadi kesalahan saat memuat data testimoni");
       } finally {
         setLoading(false);
@@ -55,18 +61,19 @@ export function TestimonialsSection() {
         
         {/* Header */}
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-gradient-to-r from-yellow-100 to-green-100 text-green-700 hover:from-yellow-200 hover:to-green-200">
-            Testimoni Keluarga TerDig Academy
+          <Badge className="mb-4 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 hover:from-indigo-200 hover:to-purple-200">
+            Testimoni Orang Tua
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Cerita
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Sukses </span>
-            dari
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-green-500"> Dua Pilar</span>
+            Apa Kata{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+              Orang Tua
+            </span>
+            ?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Ribuan keluarga telah merasakan keunggulan dua pilar TerDig Academy. 
-            Dari prestasi akademik hingga karya seni digital yang membanggakan - simak pengalaman mereka!
+            Simak pengalaman orang tua yang telah mempercayakan pendidikan
+            anaknya kepada TerDig Academy.
           </p>
         </div>
 
@@ -89,11 +96,7 @@ export function TestimonialsSection() {
 
                 {/* Program Badge */}
                 <div className="mb-4">
-                  <Badge className={`text-xs ${
-                    testimonial.program?.includes("Sanggar") || testimonial.program?.includes("AI Art") || testimonial.program?.includes("Desain")
-                      ? "bg-green-100 text-green-700"
-                      : "bg-blue-100 text-blue-700"
-                  }`}>
+                  <Badge className="text-xs bg-blue-100 text-blue-700">
                     {testimonial.program}
                   </Badge>
                 </div>
