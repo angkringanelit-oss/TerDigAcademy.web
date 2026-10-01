@@ -73,14 +73,22 @@ export function TestimonialsPage() {
   if (error) {
     return (
       <div className="min-h-screen py-20 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-500 font-semibold">{error}</p>
-          <Button 
-            className="mt-4"
-            onClick={() => window.location.reload()}
+        <div className="text-center max-w-md mx-auto px-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+            Testimoni Sedang Kami Siapkan
+          </h1>
+          <p className="text-gray-600 mb-8">
+            Cerita pengalaman orang tua siswa TerDig Academy akan segera tampil di halaman ini.
+            Ingin tahu lebih dulu tentang program kami? Tim kami siap membantu Anda via WhatsApp.
+          </p>
+          <a
+            href="https://wa.me/62895339329650?text=Halo%20TerDig%20Academy%2C%20saya%20ingin%20bertanya%20tentang%20program%20belajar%20untuk%20anak%20saya."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-md bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-green-700 transition-colors"
           >
-            Coba Lagi
-          </Button>
+            Chat WhatsApp TerDig Academy
+          </a>
         </div>
       </div>
     );

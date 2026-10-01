@@ -4,6 +4,7 @@ import { KeunggulanSection } from "../components/KeunggulanSection";
 import { ProgramSection } from "../components/ProgramSection";
 import { TestimonialsSection } from "../components/TestimonialsSection";
 import { ProgramUnggulanAiSection } from "../components/ProgramUnggulanAiSection";
+import { SmartSessionSection } from "../components/SmartSessionSection";
 import { FinalCTASection } from "../components/FinalCTASection";
 
 export function HomePage() {
@@ -13,7 +14,7 @@ export function HomePage() {
         <title>TerDig Academy - Bimbel Akademik Modern dengan AI</title>
         <meta
           name="description"
-          content="Bimbel Akademik Modern untuk SD dengan pendampingan AI Tutor pribadi 24/7. Tutor profesional, laporan progress via WhatsApp, trial gratis 7 hari."
+          content="Bimbel Akademik Modern untuk SD dengan pendampingan AI Tutor pribadi 24/7. Tutor profesional, laporan progress via WhatsApp setiap 2 minggu, Tes Pemetaan Awal + 1x Trial Class gratis."
         />
       </Helmet>
       {/* 1. ATTENTION */}
@@ -26,7 +27,9 @@ export function HomePage() {
       <TestimonialsSection />
       {/* 5. DESIRE — Program Unggulan AI */}
       <ProgramUnggulanAiSection />
-      {/* 6. ACTION */}
+      {/* 6. KEMITRAAN — TerDig Smart Session untuk Sekolah & Komunitas */}
+      <SmartSessionSection />
+      {/* 7. ACTION */}
       <FinalCTASection />
     </div>
   );

@@ -35,7 +35,7 @@ export function SuccessModal({ isOpen, onClose, type, data }: SuccessModalProps)
   const getDescription = () => {
     switch (type) {
       case "trial":
-        return "Selamat! Anda telah berhasil mendaftar untuk trial gratis 7 hari. Tim kami akan menghubungi Anda segera.";
+        return "Selamat! Anda telah berhasil mendaftar untuk Tes Pemetaan Awal + 1x Trial Class gratis. Tim kami akan menghubungi Anda segera.";
       case "consultation":
         return "Konsultasi gratis Anda telah dijadwalkan. Tim ahli kami akan menghubungi Anda sesuai waktu yang dipilih.";
       case "package":

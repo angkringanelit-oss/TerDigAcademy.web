@@ -14,7 +14,7 @@ const keunggulanData = [
     icon: MessageCircle,
     title: "Laporan Progress via WhatsApp",
     description:
-      "Orang tua menerima laporan perkembangan anak secara otomatis setelah setiap sesi pembelajaran.",
+      "Orang tua menerima laporan perkembangan anak secara berkala via WhatsApp setiap 2 minggu.",
     gradient: "from-green-500 to-teal-500",
     delay: "150",
   },

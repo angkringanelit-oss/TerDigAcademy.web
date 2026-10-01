@@ -89,7 +89,7 @@ export function DaftarPage() {
     ].join("\n");
 
     const encodedMessage = encodeURIComponent(pesan);
-    const waUrl = `https://wa.me/628953395950?text=${encodedMessage}`;
+    const waUrl = `https://wa.me/62895339329650?text=${encodedMessage}`;
 
     // Open WhatsApp in new tab
     window.open(waUrl, "_blank");

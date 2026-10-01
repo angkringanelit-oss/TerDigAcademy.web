@@ -53,12 +53,16 @@ export function TestimonialsSection() {
     fetchTestimonials();
   }, []);
 
+  // Bila data testimoni gagal dimuat, seksi ini disembunyikan dari pengunjung
+  if (error) {
+    return null;
+  }
+
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         {loading && <p className="text-center text-blue-600 font-semibold">Loading...</p>}
-        {error && <p className="text-center text-red-500 font-semibold">{error}</p>}
-        
+
         {/* Header */}
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 hover:from-indigo-200 hover:to-purple-200">

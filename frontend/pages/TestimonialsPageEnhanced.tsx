@@ -125,10 +125,10 @@ const getProgramBadge = (program: string) => {
 
 // ─── Statistics Data ─────────────────────────────────
 const statsData = [
-  { icon: Users, end: 1000, suffix: "+", label: "Orang Tua Puas", color: "text-blue-600", bg: "bg-blue-50" },
-  { icon: Star, end: 49, suffix: "", label: "Rating Rata-rata", displayValue: "4.9/5", color: "text-yellow-500", bg: "bg-yellow-50" },
-  { icon: Trophy, end: 95, suffix: "%", label: "Peningkatan Prestasi", color: "text-green-600", bg: "bg-green-50" },
-  { icon: Heart, end: 98, suffix: "%", label: "Recommend ke Teman", color: "text-pink-500", bg: "bg-pink-50" },
+  { icon: Users, end: 8, suffix: "", label: "Anak per Kelas", displayValue: "5–8", color: "text-blue-600", bg: "bg-blue-50" },
+  { icon: BookOpen, end: 3, suffix: "", label: "Program Unggulan", displayValue: "3", color: "text-yellow-500", bg: "bg-yellow-50" },
+  { icon: MessageCircle, end: 2, suffix: "x", label: "Laporan per Bulan ke Orang Tua", displayValue: "2x", color: "text-green-600", bg: "bg-green-50" },
+  { icon: Sparkles, end: 1, suffix: "x", label: "Trial Class Gratis + Tes Pemetaan Awal", displayValue: "1x", color: "text-pink-500", bg: "bg-pink-50" },
 ];
 
 // ─── Trust Badges Data ───────────────────────────────
@@ -258,7 +258,7 @@ export function TestimonialsPageEnhanced() {
                 ))}
               </div>
               <span className="font-medium">
-                Bergabung dengan <strong className="text-purple-600">1.000+</strong> orang tua lainnya
+                Bergabung dengan <strong className="text-purple-600">keluarga</strong> TerDig Academy lainnya
               </span>
             </div>
           </div>
@@ -320,7 +320,7 @@ export function TestimonialsPageEnhanced() {
                 TerDig Academy dalam Angka
               </h2>
               <p className="text-gray-600">
-                Hasil nyata yang telah kami berikan untuk ribuan keluarga
+                Fakta tentang cara belajar di TerDig Academy
               </p>
             </div>
 
@@ -670,11 +670,10 @@ export function TestimonialsPageEnhanced() {
                   TerDig!
                 </h2>
                 <p className="text-purple-100 text-lg mb-4 max-w-2xl mx-auto">
-                  Lebih dari <strong className="text-white">1.000 orang tua</strong> telah mempercayai TerDig Academy
-                  untuk masa depan anak mereka.
+                  Berikan pengalaman belajar yang hangat dan terpantau untuk masa depan anak Anda bersama TerDig Academy.
                 </p>
                 <p className="text-purple-200 text-sm mb-10 max-w-xl mx-auto">
-                  🌟 Trial gratis 7 hari • 🎯 Tutor berpengalaman • 📊 Laporan progress via WhatsApp
+                  🌟 Tes Pemetaan Awal + 1x Trial Class gratis • 🎯 Kelas kecil maks 5–8 anak • 📊 Laporan progress via WhatsApp setiap 2 minggu
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -690,7 +689,7 @@ export function TestimonialsPageEnhanced() {
                     className="border-2 border-white/80 text-white hover:bg-white/20 px-8 py-4 rounded-xl font-bold text-base"
                     onClick={() =>
                       window.open(
-                        "https://wa.me/628953395950?text=Halo%20TerDig%20Academy!%20Saya%20tertarik%20dengan%20program%20bimbel%20akademik%20dan%20ingin%20tahu%20lebih%20lanjut.",
+                        "https://wa.me/62895339329650?text=Halo%20TerDig%20Academy!%20Saya%20tertarik%20dengan%20program%20bimbel%20akademik%20dan%20ingin%20tahu%20lebih%20lanjut.",
                         "_blank"
                       )
                     }

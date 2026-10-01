@@ -218,7 +218,7 @@ export function AIConsultationPage() {
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 animate-in fade-in slide-in-from-top-2">
                     <p className="text-amber-800 text-sm mb-3 font-medium">{errorMessage}</p>
                     <a
-                      href="https://wa.me/628953395950?text=Halo%20Admin%20TerDig,%20saya%20butuh%20bantuan%20tentang%20bimbel%20atau%20AI%20Tutor"
+                      href="https://wa.me/62895339329650?text=Halo%20Admin%20TerDig,%20saya%20butuh%20bantuan%20tentang%20bimbel%20atau%20AI%20Tutor"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors shadow-sm"

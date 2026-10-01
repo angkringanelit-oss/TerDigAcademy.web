@@ -11,8 +11,8 @@ export const APP_VERSION = '1.0.0';
 // Contact Information
 export const CONTACT_INFO = {
   phone: '62895339329650',
-  whatsapp: '+62 895339329650',
-  email: 'terdig_official@gmail.com',
+  whatsapp: '+62 895-3393-29650',
+  email: 'terdig.official@gmail.com',
   address: 'Jl. Ambokulon Gang I No. 14, Dusun II RT 04 RW 02, Comal-Pemalang'
 };
 
@@ -36,7 +36,7 @@ export const FEATURES = {
 
 // Pricing Configuration
 export const PRICING = {
-  trialDays: 7,
+  trialDays: 1,
   basicPrice: 199000,
   premiumPrice: 299000,
   ultimatePrice: 499000,

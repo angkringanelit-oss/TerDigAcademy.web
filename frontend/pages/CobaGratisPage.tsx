@@ -38,7 +38,7 @@ const freeFeatures = [
 const benefits = [
   "Tidak ada biaya tersembunyi",
   "Bisa dibatalkan kapan saja",
-  "Akses penuh selama 7 hari",
+  "Tes Pemetaan Awal + 1x Trial Class gratis",
   "Dukungan customer service 24/7",
   "Laporan perkembangan anak",
   "Konsultasi dengan guru"
@@ -158,8 +158,8 @@ export function CobaGratisPage() {
                 Hari Ini!
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Dapatkan akses penuh ke platform TerDig selama 7 hari tanpa biaya apapun. 
-                Rasakan sendiri mengapa ribuan orang tua memilih TerDig untuk pendidikan anak mereka!
+                Mulai dengan Tes Pemetaan Awal untuk memetakan kemampuan anak, lalu ikuti 1x Trial Class gratis tanpa biaya apa pun.
+                Rasakan sendiri suasana belajar di TerDig Academy sebelum Ayah/Bunda memutuskan!
               </p>
             </div>
 
@@ -229,7 +229,7 @@ export function CobaGratisPage() {
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl text-gray-900">Daftar Sekarang</CardTitle>
                 <CardDescription>
-                  Isi data diri untuk memulai trial gratis 7 hari
+                  Isi data diri untuk mendaftar Tes Pemetaan Awal + 1x Trial Class gratis
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -373,13 +373,13 @@ export function CobaGratisPage() {
                     ) : (
                       <>
                         <Gift className="w-5 h-5 mr-2" />
-                        Mulai Trial Gratis 7 Hari
+                        Mulai Trial Class Gratis
                       </>
                     )}
                   </Button>
 
                   <p className="text-center text-sm text-gray-500">
-                    Dengan mendaftar, anak Anda akan mendapatkan akses penuh selama 7 hari
+                    Dengan mendaftar, anak Anda akan mendapatkan Tes Pemetaan Awal dan 1x Trial Class gratis
                   </p>
                 </form>
               </CardContent>

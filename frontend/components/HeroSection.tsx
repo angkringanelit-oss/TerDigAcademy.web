@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Star, Users, BookOpen, Sparkles, GraduationCap, Brain } from "lucide-react";
+import { Star, Users, BookOpen, MessageCircle, Sparkles, GraduationCap } from "lucide-react";
 import { Mascot } from "./Mascot";
 import { useNavigate } from "react-router-dom";
 
@@ -89,23 +89,23 @@ export function HeroSection() {
               <div className="text-center px-2">
                 <div className="flex flex-col items-center">
                   <Users className="w-5 h-5 sm:w-7 sm:h-7 text-indigo-500 mb-1" />
-                  <span className="text-2xl sm:text-4xl font-bold text-indigo-600">500+</span>
+                  <span className="text-2xl sm:text-4xl font-bold text-indigo-600">5–8</span>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-600 mt-1">Siswa Aktif</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">Anak per Kelas</p>
               </div>
               <div className="text-center px-2">
                 <div className="flex flex-col items-center">
-                  <Brain className="w-5 h-5 sm:w-7 sm:h-7 text-purple-500 mb-1" />
-                  <span className="text-2xl sm:text-4xl font-bold text-purple-600">98%</span>
+                  <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-purple-500 mb-1" />
+                  <span className="text-2xl sm:text-4xl font-bold text-purple-600">3</span>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-600 mt-1">Tingkat Kepuasan</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">Program Unggulan</p>
               </div>
               <div className="text-center px-2">
                 <div className="flex flex-col items-center">
-                  <Star className="w-5 h-5 sm:w-7 sm:h-7 text-amber-500 mb-1" />
-                  <span className="text-2xl sm:text-4xl font-bold text-amber-600">4.9</span>
+                  <MessageCircle className="w-5 h-5 sm:w-7 sm:h-7 text-amber-500 mb-1" />
+                  <span className="text-2xl sm:text-4xl font-bold text-amber-600">2x</span>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-600 mt-1">Rating Orang Tua</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">Laporan per Bulan ke Orang Tua</p>
               </div>
             </div>
           </div>

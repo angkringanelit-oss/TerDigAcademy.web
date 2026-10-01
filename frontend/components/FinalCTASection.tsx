@@ -44,7 +44,7 @@ export function FinalCTASection() {
 
           {/* Sub-heading */}
           <p className="text-base sm:text-lg md:text-xl text-white/80 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
-            Daftar trial gratis 7 hari untuk Program Calistung atau Bimbel SD.
+            Mulai dengan Tes Pemetaan Awal + 1x Trial Class gratis untuk Program Calistung Ceria atau Bimbel SD.
             Tanpa komitmen. Buktikan sendiri manfaatnya.
           </p>
 

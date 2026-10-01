@@ -18,8 +18,8 @@ const programs = [
     btnText: "Daftar Calistung",
     features: [
       "Metode Fun Learning & Game-based",
-      "Kelas kecil (Maksimal 8 siswa)",
-      "Laporan perkembangan harian ke Orang Tua",
+      "Kelas kecil (maks 5–8 anak)",
+      "Laporan perkembangan via WhatsApp setiap 2 minggu",
     ],
   },
   {

@@ -144,7 +144,7 @@ export function DemoPage() {
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Jelajahi semua fitur dan layanan TerDig yang dirancang khusus untuk anak. 
-            Lihat sendiri mengapa ribuan orang tua memilih TerDig sebagai partner belajar anak mereka.
+            Lihat sendiri bagaimana TerDig mendampingi anak belajar dengan cara yang menyenangkan.
           </p>
         </div>
 
@@ -286,19 +286,19 @@ export function DemoPage() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm">500K+ anak belajar</span>
+                    <span className="text-sm">Kelas kecil, maks 5–8 anak per kelas</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm">5K+ video pembelajaran</span>
+                    <span className="text-sm">3 program unggulan untuk TK & SD</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm">98% kepuasan orang tua</span>
+                    <span className="text-sm">Laporan perkembangan via WhatsApp setiap 2 minggu</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm">Rating 4.9/5 dari pengguna</span>
+                    <span className="text-sm">Tes Pemetaan Awal + 1x Trial Class gratis</span>
                   </div>
                 </div>
               </CardContent>
@@ -315,7 +315,7 @@ export function DemoPage() {
               </h2>
               <p className="text-purple-100 mb-8 max-w-2xl mx-auto">
                 Setelah melihat demo, saatnya memberikan yang terbaik untuk anak. 
-                Daftar sekarang dan dapatkan akses gratis selama 7 hari!
+                Daftar sekarang dan mulai dengan Tes Pemetaan Awal + 1x Trial Class gratis!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
@@ -323,7 +323,7 @@ export function DemoPage() {
                   className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-8 py-3"
                 >
                   <Play className="w-5 h-5 mr-2" />
-                  Mulai Gratis 7 Hari
+                  Mulai Trial Class Gratis
                 </Button>
                 <Button 
                   onClick={() => navigate("/konsultasi-gratis")}

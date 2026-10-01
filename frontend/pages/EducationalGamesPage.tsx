@@ -220,13 +220,13 @@ export function EducationalGamesPage() {
                 </p>
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-sm">
                   <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full">
-                    <Users className="w-4 h-4 text-yellow-500" /> <span>50K+ Pemain Aktif</span>
+                    <Users className="w-4 h-4 text-yellow-500" /> <span>Untuk Anak TK & SD</span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full">
-                    <Trophy className="w-4 h-4 text-purple-500" /> <span>1000+ Game Dimainkan</span>
+                    <Trophy className="w-4 h-4 text-purple-500" /> <span>Belajar Sambil Bermain</span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full">
-                    <Star className="w-4 h-4 text-pink-500" /> <span>Rating 4.9/5</span>
+                    <Star className="w-4 h-4 text-pink-500" /> <span>Materi Sesuai Tahap Belajar Anak</span>
                   </div>
                 </div>
               </div>

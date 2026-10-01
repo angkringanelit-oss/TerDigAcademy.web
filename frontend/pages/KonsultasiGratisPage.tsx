@@ -72,24 +72,18 @@ const consultants = [
     title: "Psikolog Anak",
     experience: "15+ tahun",
     specialization: "Perkembangan Anak & Stimulasi",
-    rating: 4.9,
-    sessions: "2,500+"
   },
   {
     name: "Dra. Maya Sari, M.Pd",
     title: "Ahli Pendidikan Anak",
     experience: "12+ tahun",
     specialization: "Metode Pembelajaran Anak",
-    rating: 4.8,
-    sessions: "1,800+"
   },
   {
     name: "Prof. Ahmad Rahman",
     title: "Konsultan Pendidikan",
     experience: "10+ tahun",
     specialization: "Persiapan Masuk Sekolah",
-    rating: 4.9,
-    sessions: "2,200+"
   }
 ];
 
@@ -807,12 +801,7 @@ export function KonsultasiGratisPage() {
                         <p className="text-sm text-green-600 font-medium">{consultant.title}</p>
                         <p className="text-xs text-gray-600 mb-2">{consultant.specialization}</p>
                         <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span>{consultant.experience}</span>
-                          <span className="flex items-center gap-1">
-                            <Star className="w-3 h-3 text-yellow-500" />
-                            {consultant.rating}
-                          </span>
-                          <span>{consultant.sessions} sesi</span>
+                          <span>Pengalaman {consultant.experience}</span>
                         </div>
                       </div>
                     </div>

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Users, Target, Award, Heart, BookOpen, Brain, Star, Trophy, Zap, Gamepad2, Palette, Sparkles } from "lucide-react";
+import { ArrowLeft, Users, Target, Award, Heart, BookOpen, Brain, Star, Trophy, Zap, Gamepad2, Palette, Sparkles, MessageCircle } from "lucide-react";
 import { Mascot } from "../components/Mascot";
 import { useNavigate } from "react-router-dom";
 
@@ -10,10 +10,10 @@ import starKidsMascot from "../assets/Star Kids.png";
 import queenChildMascot from "../assets/Quen Child.png";
 
 const stats = [
-  { icon: Users, label: "Siswa Aktif", value: "1000+", color: "text-blue-600" },
-  { icon: BookOpen, label: "Program Akademik", value: "20+", color: "text-green-600" },
-  { icon: Palette, label: "Program Kreatif", value: "15+", color: "text-purple-600" },
-  { icon: Star, label: "Rating Orang Tua", value: "4.9", color: "text-yellow-600" }
+  { icon: Users, label: "Anak per Kelas", value: "5–8", color: "text-blue-600" },
+  { icon: BookOpen, label: "Program Unggulan", value: "3", color: "text-green-600" },
+  { icon: MessageCircle, label: "Laporan per Bulan ke Orang Tua", value: "2x", color: "text-purple-600" },
+  { icon: Star, label: "Trial Class Gratis", value: "1x", color: "text-yellow-600" }
 ];
 
 const values = [
@@ -65,7 +65,7 @@ const milestones = [
   { year: "2021", title: "Dua Pilar Terbentuk", description: "Meluncurkan Bimbel TerDig dan Sanggar Seni Digital sebagai dua pilar pendidikan" },
   { year: "2022", title: "Star Kids & Quen Chlid", description: "Memperkenalkan maskot sebagai teman belajar akademik dan kreatif anak" },
   { year: "2023", title: "AI untuk Kreativitas", description: "Mengintegrasikan AI Art dan teknologi digital terdepan dalam pembelajaran" },
-  { year: "2024", title: "1000+ Siswa Aktif", description: "Menjadi akademi dengan kombinasi program akademik dan seni digital terlengkap" }
+  { year: "2024", title: "Fokus Kelas Kecil", description: "Memperkuat pembelajaran dengan kelas kecil maks 5–8 anak agar setiap anak terpantau perkembangannya" }
 ];
 
 export function AboutPage() {
